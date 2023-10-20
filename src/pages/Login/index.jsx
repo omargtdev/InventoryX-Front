@@ -26,12 +26,13 @@ const Login = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const { isOk, data, errorMessage } = await authService.login(
+		const { isOk, token, errorMessage } = await authService.login(
 			loginUsername,
 			password
 		);
+
 		if (isOk) {
-			setUserToken(data.token);
+			setUserToken(token);
 			return;
 		}
 
