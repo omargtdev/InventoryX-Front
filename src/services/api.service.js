@@ -89,5 +89,5 @@ export default {
 	GET,
 	POST,
 	PUT,
-	DELETE
-}
+	DELETE,
+};

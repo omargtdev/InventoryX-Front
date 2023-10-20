@@ -7,10 +7,10 @@ export const useUserStore = create(
 	persist(
 		(set, get) => ({
 			token: null,
-			setToken: token => set({ token }),
+			setToken: (token) => set({ token }),
 			info: null,
-			setUser: userInfo => set({ info: userInfo })
+			setUser: (userInfo) => set({ info: userInfo }),
 		}),
 		{ name: localStorageItemName }
 	)
-)
+);

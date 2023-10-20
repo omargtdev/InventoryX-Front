@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar/Side";
 import { useIsUserLoggedIn } from "../../hooks/useIsUserLoggedIn";
 
 const Dashboard = () => {
@@ -9,15 +9,16 @@ const Dashboard = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if(!isUserLoggedIn)
-			navigate("/login");
-	}, [isUserLoggedIn])
+		if (!isUserLoggedIn) navigate("/login");
+	}, [isUserLoggedIn]);
 
 	return (
 		<>
-			<Sidebar />
+			<div className="flex gap-10 ">
+				<Sidebar />
 
-			<Outlet />
+				<Outlet />
+			</div>
 		</>
 	);
 };
