@@ -1,28 +1,23 @@
+import env from "../config/env";
 import apiService from "./api.service";
-
-// TODO: Get base url from env
-const BASE_URL = "http://localhost:4500/auth";
-
-/**
- * ResponseModel
- * ok: boolean
- * data: any
- * errorMessage: string
- */
-
-const baseModel = { isOk: false, data: null, errorMessage: null };
-
+import ResponseModel from "./models/ResponseModel";
 
 const login = async (username, password) => {
+	const result = new ResponseModel();
 	try {
-		const response = await apiService.POST(`${BASE_URL}/login`, { username, password });
+		const response = await apiService.POST(`${env.IDENTITY_API_URL}/auth/login`, { username, password });
 		const data = await response.json();
-		if(!response.ok)
-			return { ...baseModel, errorMessage: data.message };
+		if(!response.ok) {
+			result.errorMessage = data.message;
+			return result;
+		}
 
-		return { ...baseModel, isOk: response.ok, data }
+		result.isOk = response.ok;
+		result.data = data;
+		return result;
 	} catch (error) {
-		throw { ...baseModel, errorMessage: "Ups! Ocurrió un error al tratar de autenticarse" };
+		result.errorMessage = "Ups! Ocurrió un error al tratar de autenticarse";
+		throw result;
 	}
 }
 
