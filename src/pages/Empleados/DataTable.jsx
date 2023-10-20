@@ -78,6 +78,10 @@ const DataTable = () => {
 		setFilterStatus(status);
 	};
 
+	const deleteUser = (id) => {
+		console.log(`Deleting user with id ${id}`);
+	}
+
 	return (
 		<>
 			<div className="flex flex-col w-full">
