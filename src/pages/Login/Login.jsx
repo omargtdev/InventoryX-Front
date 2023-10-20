@@ -10,13 +10,12 @@ import { useUserStore } from "../../store/useUserStore";
 
 const Login = () => {
 	const isUserLoggedIn = useIsUserLoggedIn();
-	const setUserToken = useUserStore(state => state.setToken);
+	const setUserToken = useUserStore((state) => state.setToken);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if(isUserLoggedIn)
-			navigate("/");
-	}, [isUserLoggedIn])
+		if (isUserLoggedIn) navigate("/");
+	}, [isUserLoggedIn]);
 
 	const { isSignIn: isSignInForm } = useContext(LoginUseContext);
 	const [resetUsername, setResetUsername] = useState("");
@@ -42,7 +41,9 @@ const Login = () => {
 		e.preventDefault();
 
 		// TODO: Implement the reset logic
-		alert(`Se envio un email a tu correo registrado con el nombre de usuario ${resetUsername}`)
+		alert(
+			`Se envio un email a tu correo registrado con el nombre de usuario ${resetUsername}`
+		);
 	};
 
 	return (

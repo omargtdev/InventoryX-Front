@@ -9,6 +9,7 @@ export const datas = [
 	{
 		id: 1,
 		icon: <RxDashboard />,
+		path: "/inicio",
 		text: "Inicio",
 	},
 	{
@@ -18,10 +19,12 @@ export const datas = [
 		subItems: [
 			{
 				id: "compras",
+				path: "/transacciones/compras",
 				text: "Compras",
 			},
 			{
 				id: "ventas",
+				path: "/transacciones/ventas",
 				text: "Ventas",
 			},
 		],
@@ -33,39 +36,47 @@ export const datas = [
 		subItems: [
 			{
 				id: "productos",
+				path: "/catalogo/productos",
 				text: "Productos",
 			},
 			{
 				id: "marcas",
+				path: "/catalogo/marcas",
 				text: "Marcas",
 			},
 			{
 				id: "categorias",
+				path: "/catalogo/categorias",
 				text: "Categorias",
 			},
 			{
 				id: "subCategorias",
+				path: "/catalogo/subCategorias",
 				text: "SubCategorias",
 			},
 		],
 	},
 	{
 		id: 4,
+		path: "/clientes",
 		icon: <GoPeople />,
 		text: "Clientes",
 	},
 	{
 		id: 5,
+		path: "/empleados",
 		icon: <GoPeople />,
 		text: "Gestión de Empleados",
 	},
 	{
 		id: 6,
+		path: "/usuarios",
 		icon: <GoPeople />,
 		text: "Gestión de Usuarios",
 	},
 	{
 		id: 7,
+		path: "/proveedores",
 		icon: <FiTruck />,
 		text: "Gestion de Proveedores",
 	},
