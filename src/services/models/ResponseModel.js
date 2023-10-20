@@ -1,13 +1,13 @@
 
 class ResponseModel {
-	#isOk = false;
-	#data = null;
-	#errorMessage = null;
+	#isOk;
+	#data;
+	#errorMessage;
 
-	constructor(isOk, data, errorMessage) {
-		this.isOk = isOk;
-		this.data = data;
-		this.errorMessage = errorMessage;
+	constructor() {
+		this.isOk = false;
+		this.data = null;
+		this.errorMessage = null;
 	}
 
 	set isOk(value) { this.#isOk = value; }

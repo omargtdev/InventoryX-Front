@@ -1,42 +1,88 @@
+import ResponseModel from "./models/ResponseModel";
 
-const defaultHeaders = {
-		"Content-Type": "application/json",
-		"Accept": "application/json"
+const GET = async (request) => {
+	const { url, headers } = request;
+	const result = new ResponseModel();
+	try {
+		const response = await fetch(url, {
+			headers,
+			method: "GET",
+		});
+		const data = await response.json();
+
+		result.isOk = response.ok;
+		result.data = data;
+		return result;
+
+	} catch (error) {
+		result.errorMessage = error.message;
+	}
+
+	return result;
 }
 
-const GET = async (url) => {
-	const response = await fetch(url, {
-		headers: defaultHeaders,
-		method: "GET",
+const POST = async (request) => {
+	const { url, headers, bodyStringified: body } = request;
+	const result = new ResponseModel();
+	try {
+		const response = await fetch(url, {
+			headers,
+			method: "POST",
+			body
+		});
+		const data = await response.json();
 
-	});
-	return response;
+		result.isOk = response.ok;
+		result.data = data;
+		return result;
+
+	} catch (error) {
+		result.errorMessage = error.message;
+	}
+
+	return result;
 }
 
-const POST = async (url, data) => {
-	const response = await fetch(url, {
-		headers: defaultHeaders,
-		method: "POST",
-		body: JSON.stringify(data)
-	});
-	return response;
+const PUT = async (request) => {
+	const { url, headers, bodyStringified: body } = request;
+	const result = new ResponseModel();
+	try {
+		const response = await fetch(url, {
+			headers,
+			method: "PUT",
+			body
+		});
+		const data = await response.json();
+
+		result.isOk = response.ok;
+		result.data = data;
+		return result;
+
+	} catch (error) {
+		result.errorMessage = error.message;
+	}
+
+	return result;
 }
 
-const PUT = async (url, data) => {
-	const response = await fetch(url, {
-		headers: defaultHeaders,
-		method: "PUT",
-		body: JSON.stringify(data)
-	});
-	return response;
-}
+const DELETE = async (request) => {
+	const { url, headers } = request;
+	const result = new ResponseModel();
+	try {
+		const response = await fetch(url, {
+			headers,
+			method: "DELETE",
+		});
+		const data = await response.json();
 
-const DELETE = async (url) => {
-	const response = await fetch(url, {
-		headers: defaultHeaders,
-		method: "DELETE",
-	});
-	return response;
+		result.isOk = response.ok;
+		result.data = data;
+		return result;
+	} catch (error) {
+		result.errorMessage = error.message;
+	}
+
+	return result;
 }
 
 export default {

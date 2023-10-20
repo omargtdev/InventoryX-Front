@@ -1,26 +1,21 @@
 import env from "../config/env";
 import apiService from "./api.service";
-import ResponseModel from "./models/ResponseModel";
+import RequestModel from "./models/RequestModel";
 
 const login = async (username, password) => {
-	const result = new ResponseModel();
-	try {
-		const response = await apiService.POST(`${env.IDENTITY_API_URL}/auth/login`, { username, password });
-		const data = await response.json();
-		if(!response.ok) {
-			result.errorMessage = data.message;
-			return result;
-		}
+	const request = new RequestModel(`${env.IDENTITY_API_URL}/auth/login`, { username, password });
+	const { isOk, errorMessage, data } = await apiService.POST(request);
+	return {
+		isOk,
+		token: data.token,
+		errorMessage
+	};
+}
 
-		result.isOk = response.ok;
-		result.data = data;
-		return result;
-	} catch (error) {
-		result.errorMessage = "Ups! Ocurrió un error al tratar de autenticarse";
-		throw result;
-	}
+const me = async () => {
 }
 
 export default {
-	login
+	login,
+	me
 }
