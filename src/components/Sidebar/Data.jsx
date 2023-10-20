@@ -1,6 +1,7 @@
 import { RxDashboard } from "react-icons/rx";
 import { RiCouponLine } from "react-icons/ri";
-import { GoPeople } from "react-icons/go";
+import { FaHandshakeSimple } from "react-icons/fa6";
+import { LuWarehouse } from "react-icons/lu";
 import { FiTruck } from "react-icons/fi";
 import { MdInsights } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
@@ -17,12 +18,12 @@ export const datas = [
 		text: "Transacciones",
 		subItems: [
 			{
-				id: "compras",
-				text: "Compras",
+				id: "receipts",
+				text: "Entradas",
 			},
 			{
-				id: "ventas",
-				text: "Ventas",
+				id: "issues",
+				text: "Salidas",
 			},
 		],
 	},
@@ -32,46 +33,33 @@ export const datas = [
 		text: "Catálogo",
 		subItems: [
 			{
-				id: "productos",
+				id: "products",
 				text: "Productos",
 			},
 			{
-				id: "marcas",
-				text: "Marcas",
-			},
-			{
-				id: "categorias",
+				id: "categories",
 				text: "Categorias",
-			},
-			{
-				id: "subCategorias",
-				text: "SubCategorias",
-			},
+			}
 		],
 	},
 	{
 		id: 4,
-		icon: <GoPeople />,
-		text: "Clientes",
+		icon: <LuWarehouse />,
+		text: "Almacenes",
 	},
 	{
 		id: 5,
-		icon: <GoPeople />,
-		text: "Gestión de Empleados",
+		icon: <FaHandshakeSimple />,
+		text: "Gestión de Clientes",
 	},
 	{
 		id: 6,
-		icon: <GoPeople />,
-		text: "Gestión de Usuarios",
+		icon: <FiTruck />,
+		text: "Gestión de Proveedores",
 	},
 	{
 		id: 7,
-		icon: <FiTruck />,
-		text: "Gestion de Proveedores",
-	},
-	{
-		id: 8,
 		icon: <FiLogOut />,
 		text: "Logout",
-	},
+	}
 ];
