@@ -28,6 +28,8 @@ const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
 const EditarEmpleado = lazy(() => import("../pages/Empleados/EditEmpleado"));
 const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
 
+const Almacenes = lazy(() => import("../pages/Almacenes/Almacenes"));
+
 export const router = createBrowserRouter([
 	{
 		path: "/login",
@@ -152,18 +154,18 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/usuarios",
-				element: (
-					<Suspense>
-						<Usuarios />,
-					</Suspense>
-				),
-			},
-			{
 				path: "/proveedores",
 				element: (
 					<Suspense>
 						<Proveedores />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/almacenes",
+				element: (
+					<Suspense>
+						<Almacenes />,
 					</Suspense>
 				),
 			},

@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { defaultData } from "./MOCK_DATA";
 import { Link } from "react-router-dom";
+import {
+	AiOutlineEdit,
+	AiOutlineDelete,
+	AiOutlineFolderView,
+} from "react-icons/ai";
 
-const DataTable = () => {
+const DataTable = ({ employees }) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 
-	const itemsPerPage = 8;
+	const itemsPerPage = 5;
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
@@ -47,10 +51,10 @@ const DataTable = () => {
 		return pageNumbers;
 	};
 
-	const filterData = defaultData.filter(
+	const filterData = employees.filter(
 		(data) =>
 			data.name.toLowerCase().includes(search.toLowerCase()) ||
-			data.lastName.toLowerCase().includes(search.toLowerCase())
+			data.last_name.toLowerCase().includes(search.toLowerCase())
 		// data.email.toLowerCase().includes(search.toLowerCase()) ||
 		// data.phone.toString().includes(search)
 	);
@@ -58,9 +62,9 @@ const DataTable = () => {
 	let filteredData;
 
 	if (filterStatus === "Activo") {
-		filteredData = filterData.filter((data) => data.status === "Activo");
+		filteredData = filterData.filter((data) => data.is_active);
 	} else if (filterStatus === "Inactivo") {
-		filteredData = filterData.filter((data) => data.status === "Inactivo");
+		filteredData = filterData.filter((data) => !data.is_active);
 	} else {
 		filteredData = filterData;
 	}
@@ -181,7 +185,7 @@ const DataTable = () => {
 												{data.name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.lastName}
+												{data.last_name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
 												{data.email}
@@ -191,31 +195,31 @@ const DataTable = () => {
 											</td>
 											<td
 												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${
-													data.status === "Activo"
+													data.is_active
 														? "text-green-500"
 														: "text-red-500"
 												}`}
 											>
-												{data.status}
+												{data.is_active ? "Activo" : "Inactivo"}
 											</td>
-											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 space-x-4 whitespace-nowrap w-fit">
+											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
 													to={`/view-empleado/${data.id}`}
-													className="bg-teal-600 text-white px-6 py-2 rounded-lg"
+													className="bg-teal-600 rounded-lg"
 												>
-													View
+													<AiOutlineFolderView className="text-white text-2xl p-1" />
 												</Link>
 												<Link
 													to={`/edit-empleado/${data.id}`}
-													className="bg-blue-600 text-white px-6 py-2 rounded-lg"
+													className="bg-blue-600 rounded-lg"
 												>
-													Edit
+													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
 													onClick={() => deleteUser(data.id)}
-													className="bg-red-600 text-white px-6 py-2 rounded-lg"
+													className="bg-red-600 rounded-lg"
 												>
-													Delete
+													<AiOutlineDelete className="text-white text-2xl p-1 " />
 												</button>
 											</td>
 										</tr>
