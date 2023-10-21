@@ -49,7 +49,7 @@ const DataTable = ({ employees }) => {
 	const filterData = employees.filter(
 		(data) =>
 			data.name.toLowerCase().includes(search.toLowerCase()) ||
-			data.lastName.toLowerCase().includes(search.toLowerCase())
+			data.last_name.toLowerCase().includes(search.toLowerCase())
 		// data.email.toLowerCase().includes(search.toLowerCase()) ||
 		// data.phone.toString().includes(search)
 	);
