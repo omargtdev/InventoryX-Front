@@ -2,9 +2,19 @@ import React, { useState } from "react";
 import { BiChevronLeft } from "react-icons/bi";
 import SidebarData from "./SidebarData";
 import UserProfile from "./UserProfile";
+import { useIsUserLoggedIn } from "../../hooks/useIsUserLoggedIn";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
 	const [toggle, setToggle] = useState(false);
+
+	const isUserLoggedIn = useIsUserLoggedIn();
+	const navigate = useNavigate();
+
+	if (!isUserLoggedIn) {
+		navigate("/login");
+		return;
+	}
 
 	return (
 		<div

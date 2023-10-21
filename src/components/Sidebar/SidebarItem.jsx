@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 
-const SidebarItem = ({ toggle, handleToggle, expandedItems, selectedItem, handleLogout, data }) => {
+const SidebarItem = ({
+	toggle, handleToggle, isUserAdmin,
+	expandedItems, selectedItem, handleLogout, data
+}) => {
+	const isEmployeeButton = data.id === 7;
+	if(!isUserAdmin && isEmployeeButton)
+		return;
+
 	const isExpanded = expandedItems.includes(data.id);
 	const isSelected = selectedItem === data.id;
 
@@ -36,8 +43,7 @@ const SidebarItem = ({ toggle, handleToggle, expandedItems, selectedItem, handle
 			</div>
 			{data.subItems && isExpanded && (
 				<div className="w-full">
-					{data.subItems.map((subItem) => (
-						<Link to={subItem.path} key={subItem.id}>
+					{data.subItems.map((subItem) => ( <Link to={subItem.path} key={subItem.id}>
 							<h2
 								key={subItem.id}
 								className="p-2 text-black hover:bg-gray-200 transition-all duration-500 rounded-md"

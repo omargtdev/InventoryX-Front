@@ -9,6 +9,7 @@ const SidebarData = ({ toggle }) => {
 	const [selectedItem, setSelectedItem] = useState(null);
 
 	const setUserToken = useUserStore(state => state.setToken);
+	const { is_admin: isUserAdmin } = useUserStore(state => state.info);
 	const setUserInfo = useUserStore(state => state.setUser);
 	const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ const SidebarData = ({ toggle }) => {
 						expandedItems={expandedItems}
 						selectedItem={selectedItem}
 						data={data}
+						isUserAdmin={isUserAdmin}
 					/>
 			))}
 		</div>
