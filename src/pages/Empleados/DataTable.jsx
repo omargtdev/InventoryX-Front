@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+	AiOutlineEdit,
+	AiOutlineDelete,
+	AiOutlineFolderView,
+} from "react-icons/ai";
 
 const DataTable = ({ employees }) => {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -197,24 +202,24 @@ const DataTable = ({ employees }) => {
 											>
 												{data.is_active ? "Activo" : "Inactivo"}
 											</td>
-											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 space-x-4 whitespace-nowrap w-fit">
+											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
 													to={`/view-empleado/${data.id}`}
-													className="bg-teal-600 text-white px-6 py-2 rounded-lg"
+													className="bg-teal-600 rounded-lg"
 												>
-													View
+													<AiOutlineFolderView className="text-white text-2xl p-1" />
 												</Link>
 												<Link
 													to={`/edit-empleado/${data.id}`}
-													className="bg-blue-600 text-white px-6 py-2 rounded-lg"
+													className="bg-blue-600 rounded-lg"
 												>
-													Edit
+													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
 													onClick={() => deleteUser(data.id)}
-													className="bg-red-600 text-white px-6 py-2 rounded-lg"
+													className="bg-red-600 rounded-lg"
 												>
-													Delete
+													<AiOutlineDelete className="text-white text-2xl p-1 " />
 												</button>
 											</td>
 										</tr>
