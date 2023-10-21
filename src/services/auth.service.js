@@ -7,12 +7,20 @@ const login = async (username, password) => {
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
-		token: data.token,
+		token: data?.token,
 		errorMessage
 	};
 }
 
-const me = async () => {
+const me = async (token) => {
+	const request = new RequestModel(`${env.IDENTITY_API_URL}/auth/profile`);
+	request.bearerToken = token;
+	const { isOk, errorMessage, data } = await apiService.GET(request);
+	return {
+		isOk,
+		userInfo: data,
+		errorMessage
+	};
 }
 
 export default {

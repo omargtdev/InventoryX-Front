@@ -11,7 +11,12 @@ const GET = async (request) => {
 		const data = await response.json();
 
 		result.isOk = response.ok;
-		result.data = data;
+
+		if(result.isOk)
+			result.data = data;
+		else
+			result.errorMessage = data.message;
+
 		return result;
 
 	} catch (error) {
@@ -33,7 +38,12 @@ const POST = async (request) => {
 		const data = await response.json();
 
 		result.isOk = response.ok;
-		result.data = data;
+
+		if(result.isOk)
+			result.data = data;
+		else
+			result.errorMessage = data.message;
+
 		return result;
 
 	} catch (error) {
@@ -55,7 +65,12 @@ const PUT = async (request) => {
 		const data = await response.json();
 
 		result.isOk = response.ok;
-		result.data = data;
+
+		if(result.isOk)
+			result.data = data;
+		else
+			result.errorMessage = data.message;
+
 		return result;
 
 	} catch (error) {
@@ -76,7 +91,12 @@ const DELETE = async (request) => {
 		const data = await response.json();
 
 		result.isOk = response.ok;
-		result.data = data;
+
+		if(result.isOk)
+			result.data = data;
+		else
+			result.errorMessage = data.message;
+
 		return result;
 	} catch (error) {
 		result.errorMessage = error.message;

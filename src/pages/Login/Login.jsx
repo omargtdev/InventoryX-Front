@@ -11,6 +11,7 @@ import { useUserStore } from "../../store/useUserStore";
 const Login = () => {
 	const isUserLoggedIn = useIsUserLoggedIn();
 	const setUserToken = useUserStore((state) => state.setToken);
+	const setUserInfo = useUserStore((state) => state.setUser);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -31,6 +32,9 @@ const Login = () => {
 		);
 
 		if (isOk) {
+			// TODO: Improve this and validate posible errors
+			const { isOk, userInfo, errorMessage } = await authService.me(token);
+			setUserInfo(userInfo);
 			setUserToken(token);
 			return;
 		}
