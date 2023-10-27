@@ -5,8 +5,9 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
+import { defaultData } from "./MOCK_DATA";
 
-const DataTable = ({ employees }) => {
+const DataTable = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
@@ -51,7 +52,7 @@ const DataTable = ({ employees }) => {
 		return pageNumbers;
 	};
 
-	const filterData = employees.filter(
+	const filterData = defaultData.filter(
 		(data) =>
 			data.name.toLowerCase().includes(search.toLowerCase()) ||
 			data.last_name.toLowerCase().includes(search.toLowerCase())
@@ -94,37 +95,17 @@ const DataTable = ({ employees }) => {
 						<input
 							type="text"
 							className="px-2 py-2 text-gray-600 border border-gray-300 rounded outline-[#3a87bb]"
-							placeholder="Buscar Empeado..."
+							placeholder="Buscar Cliente..."
 							value={search}
 							onChange={handleSearchChange}
 						/>
 					</div>
-					<div className="flex gap-10">
-						<button
-							className="text-black-600 font-medium"
-							onClick={() => handleFilter("all")}
-						>
-							Todo
-						</button>
-						<button
-							className="text-teal-600"
-							onClick={() => handleFilter("Activo")}
-						>
-							Activos
-						</button>
-						<button
-							className="text-red-600"
-							onClick={() => handleFilter("Inactivo")}
-						>
-							Inactivos
-						</button>
-					</div>
 					<div>
 						<Link
-							to="/nuevo-empleado"
+							to="/nuevo-cliente"
 							className=" border-[#3a87bb] border px-10 py-2 rounded-2xl text-[#3a87bb] font-medium hover:bg-[#3a87bb] hover:text-white duration-500 ease-in-out"
 						>
-							Nuevo Empleado
+							Nuevo Cliente
 						</Link>
 					</div>
 				</div>
@@ -156,19 +137,13 @@ const DataTable = ({ employees }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Email
-										</th>
-										<th
-											scope="col"
-											className="text-sm font-lg text-white px-6 py-4"
-										>
 											Celular
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Estado
+											Fecha de Registro
 										</th>
 									</tr>
 								</thead>
@@ -188,27 +163,20 @@ const DataTable = ({ employees }) => {
 												{data.last_name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.email}
+												{data.documente_number}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.phone}
-											</td>
-											<td
-												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${
-													data.is_active ? "text-green-500" : "text-red-500"
-												}`}
-											>
-												{data.is_active ? "Activo" : "Inactivo"}
+												{data.date_register}
 											</td>
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
-													to={`/view-empleado/${data.id}`}
+													to={`/view-cliente/${data.id}`}
 													className="bg-teal-600 rounded-lg"
 												>
 													<AiOutlineFolderView className="text-white text-2xl p-1" />
 												</Link>
 												<Link
-													to={`/edit-empleado/${data.id}`}
+													to={`/edit-cliente/${data.id}`}
 													className="bg-blue-600 rounded-lg"
 												>
 													<AiOutlineEdit className="text-white text-2xl p-1 " />

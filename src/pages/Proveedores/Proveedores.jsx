@@ -1,9 +1,11 @@
 import React from "react";
+import DataTable from "./DataTable";
 
 const Proveedores = () => {
 	return (
-		<div>
-			<h1>Proveedores</h1>
+		<div className="flex flex-col py-10 w-full ">
+			<h1 className="text-3xl font-bold">Proveedores</h1>
+			<DataTable />
 		</div>
 	);
 };

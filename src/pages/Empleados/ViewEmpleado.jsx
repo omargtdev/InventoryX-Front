@@ -1,80 +1,127 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import employeeService from "../../services/employee.service";
+import { useUserStore } from "../../store/useUserStore";
 
 const ViewEmpleado = () => {
-	const { id } = useParams();
+	const { id } = useParams(); // Get the user ID from the URL
 
-	const [employeeData, setEmployeeData] = useState({
-		name: "",
-		lastName: "",
-		user: "",
-		typeDocument: "",
-		document: "",
-		email: "",
-		phone: "",
-		address: "",
-		estado: "",
-		profileImage: "",
-	});
+	const [employee, setEmployee] = useState([]);
+	const token = useUserStore((state) => state.token);
+
+	const fetchData = async () => {
+		try {
+			const {
+				isOk,
+				employee: employeeData,
+				resultMessage,
+			} = await employeeService.getEmployeeById(token, id);
+			if (!isOk) {
+				alert(resultMessage);
+			}
+			setEmployee(employeeData);
+			//console.log("Employee Data:", employeeData); // Mueve el console.log aquí
+		} catch (error) {
+			console.error("Error fetching employee data: ", error);
+		}
+	};
+
+	//console.log(employee); // Mueve el console.log aquí
 
 	useEffect(() => {
-		// Realiza una solicitud GET al servidor para obtener los datos del empleado por su ID
-		// Llena el estado `employeeData` con los datos recibidos del servidor
-		// Puedes usar el `id` obtenido de los parámetros de la URL para hacer la solicitud al servidor
+		fetchData();
 	}, [id]);
 
 	return (
 		<div className="w-full p-10 mt-10">
 			<div>
-				<h1 className="text-3xl font-bold mb-10">Detalles del Empleado</h1>
+				<h1 className="text-3xl font-bold mb-10 font-sans-montserrat">
+					Detalles del Empleado
+				</h1>
 			</div>
 			<div className="flex gap-3 justify-around w-full">
-				<div className="flex flex-col flex-1 gap-4">
+				<div className="flex flex-col flex-1 gap-4 bg-[#cfcfcf4f] p-5 rounded-3xl">
 					<div>
-						<label className="font-semibold text-lg">Nombre:</label>
-						<p>{employeeData.name}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Nombre:
+						</label>
+						<p className="text-center font-sans-montserrat">{employee.name}</p>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Apellido:</label>
-						<p>{employeeData.lastName}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Apellido:
+						</label>
+						<p className="text-center font-sans-montserrat">
+							{employee.last_name}
+						</p>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Usuario:</label>
-						<p>{employeeData.user}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Usuario:
+						</label>
+						<p className="text-center font-sans-montserrat">
+							{employee.username}
+						</p>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Documento</label>
-						<div>
-							<p>{employeeData.typeDocument}</p>
-							<p>{employeeData.document}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Documento
+						</label>
+						<div className="flex items-center justify-center gap-3 ">
+							<p className="text-center font-sans-montserrat">
+								{employee.document_type}:
+							</p>
+							<p className="text-center font-sans-montserrat">
+								{employee.document_number}
+							</p>
 						</div>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Email:</label>
-						<p>{employeeData.email}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Email:
+						</label>
+						<p className="text-center font-sans-montserrat">{employee.email}</p>
 					</div>
 				</div>
-				<div className="flex flex-1 flex-col shrink-0 gap-4 ">
+				<div className="flex flex-1 flex-col shrink-0 gap-4 bg-[#cfcfcf4f] p-5 rounded-3xl">
 					<div>
-						<label className="font-semibold text-lg">Celular:</label>
-						<p>{employeeData.phone}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Celular:
+						</label>
+						<p className="text-center font-sans-montserrat">{employee.phone}</p>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Dirección:</label>
-						<p>{employeeData.address}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Dirección:
+						</label>
+						<p className="text-center font-sans-montserrat">
+							{employee.address}
+						</p>
 					</div>
 					<div>
-						<label className="font-semibold text-lg">Estado:</label>
-						<p>{employeeData.estado}</p>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Estado:
+						</label>
+						<p className="text-center font-sans-montserrat">
+							{employee.is_active ? "Activo" : "Inactivo"}
+						</p>
 					</div>
-				</div>
-				<div className="flex flex-col items-center flex-1 gap-4 bg-[#0000001c] p-3 rounded-xl">
-					<label className="font-semibold text-lg">Perfil:</label>
-					<img
-						src={employeeData.profileImage}
-						alt="Imagen de perfil"
-						className="rounded-3xl w-[350px] h-[350px] object-cover"
-					/>
+					<div>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Permisos:
+						</label>
+						{employee.permissions ? (
+							employee.permissions.map((permission, index) => (
+								<p className="text-center font-sans-montserrat" key={index}>
+									{permission}
+								</p>
+							))
+						) : (
+							<p className="text-center font-sans-montserrat">
+								No se encontraron permisos
+							</p>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
