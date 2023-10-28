@@ -1,44 +1,121 @@
 import React, { useState, useEffect } from "react";
-
 import BtnAdd from "../../components/BtnAdd";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import employeeService from "../../services/employee.service";
+import { useUserStore } from "../../store/useUserStore";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import {
+	optPermisions,
+	optDocuments,
+	optEstado,
+	colorStyles,
+} from "./Selects.jsx";
 
 const EditEmpleado = () => {
-	const [selectedImage, setSelectedImage] = useState(""); // Para mostrar la imagen seleccionada.
-	const [employee, setEmployee] = useState({}); // Para almacenar los datos del empleado a editar.
+	const animatedComponents = makeAnimated();
+	const { id } = useParams(); // Obtén el ID del empleado desde la URL
+	const [selectedPermission, setSelectedPermission] = useState([]);
 
-	const handleImageChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			const imageURL = URL.createObjectURL(file);
-			setSelectedImage(imageURL);
-		}
-	};
 	const {
 		register,
-		handleSubmit,
+		setValue,
 		formState: { errors },
+		handleSubmit,
 	} = useForm();
 
-	const onSubmitUpdate = handleSubmit((updatedEmployeeData) => {
-		// Aquí puedes actualizar los datos del empleado en la base de datos.
-		// Puedes utilizar updatedEmployeeData para enviar los datos actualizados al servidor.
-		console.log(updatedEmployeeData);
+	const token = useUserStore((state) => state.token);
+
+	const fetchData = async (id) => {
+		try {
+			// Obtén los datos actuales del empleado por su ID
+			const {
+				isOk,
+				employee: employeeData,
+				resultMessage,
+			} = await employeeService.getEmployeeById(token, id);
+
+			if (isOk) {
+				// Actualiza el estado con los datos del empleado obtenidos
+				setEmployee(employeeData);
+				setSelectedPermission(employeeData.permissions);
+			} else {
+				alert(resultMessage);
+			}
+		} catch (error) {
+			console.error("Error al obtener datos del empleado: ", error);
+		}
+	};
+
+	const [employee, setEmployee] = useState({
+		// Define una estructura para almacenar los datos del empleado
+		name: "",
+		last_name: "",
+		username: "",
+		document_type: "",
+		document_number: "",
+		email: "",
+		phone: "",
+		address: "",
+		is_active: "",
+		permissions: [],
 	});
 
-	// Cargar datos del empleado a editar en el estado local al cargar el componente.
-	//useEffect(() => {
-	// Supongamos que tienes el ID del empleado que deseas editar.
-	//const employeeIdToEdit = 1; // Debes reemplazarlo con el ID del empleado deseado.
+	useEffect(() => {
+		// Realiza una solicitud para obtener los datos del empleado por su ID
+		fetchData(id);
+	}, [id]);
 
-	// Buscar al empleado por su ID en la base de datos (employeeData).
-	// const employeeToEdit = employeeData.find(
-	// 	(employee) => employee.id === employeeIdToEdit
-	// );
+	useEffect(() => {
+		// Cuando los datos del empleado cambian, asigna esos valores a los campos de entrada
+		if (employee) {
+			setValue("name", employee.name);
+			setValue("last_name", employee.last_name);
+			setValue("username", employee.username);
+			setValue("document_type", employee.document_type);
+			setValue("document_number", employee.document_number);
+			setValue("email", employee.email);
+			setValue("phone", employee.phone);
+			setValue("address", employee.address);
+			setValue("is_active", employee.is_active);
+			setSelectedPermission(
+				employee.permissions.map((permission) => ({
+					value: permission,
+					label: permission,
+					color: "#3a87bb",
+				}))
+			);
+		}
+	}, [employee, setValue]);
 
-	// Almacenar los datos del empleado en el estado local para su edición.
-	//setEmployee(employeeToEdit);
-	//}, []);
+	const handleUpdateEmployee = async (updatedEmployeeData) => {
+		try {
+			// Ensure selectedPermission is not null or undefined
+			if (!selectedPermission) {
+				setSelectedPermission([]);
+			}
+
+			// Realiza una solicitud para actualizar al empleado
+			updatedEmployeeData.enabled = employee.is_active;
+			updatedEmployeeData.permissions = selectedPermission.map(
+				(option) => option.value
+			);
+			const response = await employeeService.updateEmployeeById(
+				token,
+				id,
+				updatedEmployeeData
+			);
+
+			if (response.isOk) {
+				alert("Empleado actualizado exitosamente");
+			} else {
+				alert(response.errorMessage);
+			}
+		} catch (error) {
+			console.error("Error al actualizar el empleado: ", error);
+		}
+	};
 
 	return (
 		<div className="w-full p-10 mt-10">
@@ -46,193 +123,248 @@ const EditEmpleado = () => {
 				<h1 className="text-3xl font-bold mb-10">Editar Empleado</h1>
 			</div>
 			<form
-				onSubmit={onSubmitUpdate}
+				onSubmit={handleSubmit(handleUpdateEmployee)}
 				className="flex flex-col items-center gap-20 "
 			>
 				<div className="flex gap-3 justify-around w-full">
 					<div className="flex flex-col flex-1 gap-4">
-						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="name"
-									{...register("name", { required: true })}
-								/>
-
-								<label id="label-input">Nombre</label>
-							</div>
-							{errors.name && <p className="text-red-500">Ingrese un Nombre</p>}
-						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="lastName"
-									{...register("lastName", { required: true })}
-								/>
-
-								<label id="label-input">Apellido</label>
-							</div>
-							{errors.lastName && (
-								<p className="text-red-500">Ingrese un Apellido</p>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="name"
+							>
+								Nombre
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg  "
+								id="name"
+								type="text"
+								placeholder=""
+								name="name"
+								disabled
+								{...register("name", { required: true })}
+							/>
+							{errors.name && (
+								<p className="text-red-500">Ingrese sus Nombres</p>
 							)}
 						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="user"
-									{...register("user", { required: true })}
-								/>
-								<label id="label-input">Usuario</label>
-							</div>
-							{errors.user && (
-								<p className="text-red-500">Ingrese un Usuario</p>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="last_name"
+							>
+								Apellido
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg "
+								id="last_name"
+								type="text"
+								placeholder=""
+								name="last_name"
+								disabled
+								{...register("last_name", { required: true })}
+							/>
+							{errors.last_name && (
+								<p className="text-red-500">Ingrese sus Apellidos</p>
 							)}
 						</div>
-						<div>
-							<div className="w-full flex justify-between gap-3">
-								<label className="">Tipo de Documento:</label>
-								<select
-									className="flex-1 text-center rounded-2xl"
-									name="typeDocument"
-									id="estado"
-									{...register("typeDocument", { required: true })}
-								>
-									<option value="">Seleccione un documento</option>
-									<option value="DNI">DNI</option>
-									<option value="RUC">RUC</option>
-								</select>
-							</div>
-							{errors.typeDocument && (
-								<p className="text-red-500">Seleccione un documento</p>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="username"
+							>
+								Usuario
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg  "
+								id="username"
+								type="text"
+								placeholder=""
+								name="username"
+								disabled
+								{...register("username", { required: true })}
+							/>
+							{errors.username && (
+								<p className="text-red-500">Ingrese un Nombre</p>
 							)}
 						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="number"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="documento"
-									{...register("documento", {
-										required: true,
-										minLength: 8,
-										maxLength: 11,
-									})}
-								/>
-								<label id="label-input">Nº Documento</label>
-							</div>
-							{errors.documento && (
-								<p className="text-red-500">
-									Documento debe tener como minimo 8 y maximo 11 digitos
-								</p>
+						<div className="w-full flex flex-col gap-3">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="document_type"
+							>
+								Tipo de Documento:
+							</label>
+							<select
+								id="document_type"
+								name="document_type"
+								className="w-full text-center border  py-1 rounded-lg"
+								value={employee.document_type}
+								onChange={(e) =>
+									setEmployee({ ...employee, document_type: e.target.value })
+								}
+								disabled
+								required
+							>
+								<option value="" disabled hidden>
+									Seleccione un documento
+								</option>
+								{optDocuments.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="document_number"
+							>
+								Numero de documento
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg "
+								id="document_number"
+								type="document_number"
+								placeholder=""
+								name="document_number"
+								{...register("document_number", {
+									required: true,
+									minLength: 8,
+									maxLength: 11,
+								})}
+								disabled
+							/>
+							{errors.document_number && (
+								<p className="text-red-500">Ingrese su numero de documento</p>
 							)}
 						</div>
 					</div>
 					<div className="flex flex-1 flex-col shrink-0 gap-4 ">
-						<div>
-							<div className="relative">
-								<input
-									type="email"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="email"
-									{...register("email", {
-										required: true,
-										pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-									})}
-								/>
-								<label id="label-input">Correo</label>
-							</div>
-							{errors.email && (
-								<p className="text-red-500">Ingrese un correo electronico</p>
-							)}
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="email"
+							>
+								Email
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg  "
+								id="email"
+								type="email"
+								placeholder=""
+								name="email"
+								disabled
+								{...register("email", {
+									required: true,
+									pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+								})}
+							/>
+							{errors.email && <p className="text-red-500">Ingrese un email</p>}
 						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="number"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="phone"
-									{...register("phone", {
-										required: true,
-										minLength: 9,
-										maxLength: 9,
-									})}
-								/>
-								<label id="label-input">Celular</label>
-							</div>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="phone"
+							>
+								phone
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg "
+								id="phone"
+								type="text"
+								placeholder=""
+								name="phone"
+								disabled
+								{...register("phone", {
+									required: true,
+									minLength: 9,
+									maxLength: 9,
+								})}
+							/>
+
 							{errors.phone?.type === "required" && (
-								<p className="text-red-500">Ingrese un numero de celular</p>
+								<p className="text-red-500">Ingrese un número de celular</p>
 							)}
 							{errors.phone?.type === "minLength" && (
-								<p className="text-red-500">El número debe tener 9 digitos</p>
+								<p className="text-red-500">El número debe tener 9 dígitos</p>
 							)}
 							{errors.phone?.type === "maxLength" && (
-								<p className="text-red-500">El número debe tener 9 digitos</p>
+								<p className="text-red-500">El número debe tener 9 dígitos</p>
 							)}
 						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="addrees"
-									{...register("addrees", { required: true })}
-								/>
-								<label id="label-input">Dirección</label>
-							</div>
-							{errors.addrees && (
-								<p className="text-red-500">
-									Ingrese una dirección de residencia
-								</p>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="address"
+							>
+								Dirección
+							</label>
+							<input
+								className="text-center font-sans-montserrat py-1 rounded-lg  "
+								id="address"
+								type="text"
+								placeholder=""
+								name="address"
+								disabled
+								{...register("address", { required: true })}
+							/>
+							{errors.address && (
+								<p className="text-red-500">Ingrese una Direccion</p>
 							)}
 						</div>
+						<div className="flex flex-col gap-2">
+							<label
+								className="font-semibold text-lg font-sans-montserrat"
+								htmlFor="is_active"
+							>
+								Estado
+							</label>
+							<select
+								id="is_active"
+								name="is_active"
+								className="w-full text-center border-2  py-1 rounded-lg  border-[#3a87bb]"
+								value={employee.is_active ? "Activo" : "Inactivo"}
+								onChange={(e) =>
+									setEmployee({
+										...employee,
+										is_active: e.target.value === "Activo",
+									})
+								}
+							>
+								{optEstado.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))}
+							</select>
+						</div>
 						<div>
-							<div className="w-full flex justify-between gap-3">
-								<label className="" htmlFor="estado">
-									Estado:
-								</label>
-								<select
-									className="flex-1 text-center rounded-2xl"
-									name="estado"
-									id="estado"
-									{...register("estado", { required: true })}
+							<div className="w-full flex flex-col gap-2">
+								<label
+									className="font-semibold text-lg font-sans-montserrat"
+									htmlFor="permisos"
 								>
-									<option value="">Seleccione estado</option>
-									<option value="activo">Activo</option>
-									<option value="inactivo">Inactivo</option>
-								</select>
+									Selecciones los permisos del empleado:
+								</label>
+								<Select
+									className="border-2 border-[#3a87bb] rounded-lg"
+									styles={colorStyles}
+									components={animatedComponents}
+									isMulti
+									name="permissions"
+									id="permissions"
+									options={optPermisions}
+									value={selectedPermission}
+									onChange={(item) => setSelectedPermission(item)}
+									isClearable={false} // evita que se pueda borrar la seleccion en grupo
+									isSearchable={false} //evita buscar escribiendo
+									closeMenuOnSelect={false} //evita que se cierre el menu al seleccione solo una opcion
+									placeholder="Selecciona permisos"
+								/>
 							</div>
-							{errors.estado && (
-								<p className="text-red-500">Seleccione un estado de empleado</p>
-							)}
 						</div>
-					</div>
-					<div className="flex flex-col items-center flex-1 gap-4 bg-[#0000001c] p-3 rounded-xl">
-						<label htmlFor="foto">Ingrese foto Perfil</label>
-						<input
-							type="file"
-							id="foto"
-							name="profileImage"
-							onChange={handleImageChange}
-						/>
 					</div>
 				</div>
 				<BtnAdd btnName={"Actualizar Empleado"} />

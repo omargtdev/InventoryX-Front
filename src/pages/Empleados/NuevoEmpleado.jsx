@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-// import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
 import BtnAdd from "../../components/BtnAdd";
 import { useForm } from "react-hook-form";
+import employeeService from "../../services/employee.service";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import { useUserStore } from "../../store/useUserStore";
+
+import { optPermisions, optDocuments, colorStyles } from "./Selects.jsx";
 
 const NuevoEmpleado = () => {
-	const [selectedImage, setSelectedImage] = useState("/src/assets/perfil.jpg");
-	console.log(selectedImage);
-
-	const handleImageChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			const imageURL = URL.createObjectURL(file);
-			setSelectedImage(imageURL);
-		}
-	};
+	const [selectedDocument, setSelectedDocument] = useState([]);
+	const [selectedPermission, setSelectedPermission] = useState([]);
+	const token = useUserStore((state) => state.token);
+	const animatedComponents = makeAnimated(); //animar el select al quitar ubna selección
 
 	const {
 		register,
@@ -21,8 +20,26 @@ const NuevoEmpleado = () => {
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = handleSubmit((employeeData) => {
+	const onSubmit = handleSubmit(async (employeeData) => {
+		// Agrega los permisos seleccionados al objeto employeeData
+
+		const permissions = selectedPermission.map((option) => option.value);
+		employeeData.permissions = permissions;
+		employeeData.document_type = selectedDocument.value;
 		console.log(employeeData);
+
+		try {
+			// Enviar los datos del nuevo empleado al servidor y obtener una respuesta con el nuevo empleado
+			const response = await employeeService.addEmployee(token, employeeData);
+			console.log(response);
+			if (response.isOk) {
+				alert("Empleado agregado exitosamente");
+			} else {
+				alert(response.errorMessage);
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	});
 
 	return (
@@ -43,7 +60,6 @@ const NuevoEmpleado = () => {
 									name="name"
 									{...register("name", { required: true })}
 								/>
-
 								<label id="label-input">Nombre</label>
 							</div>
 							{errors.name && <p className="text-red-500">Ingrese un Nombre</p>}
@@ -55,49 +71,33 @@ const NuevoEmpleado = () => {
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
-									name="lastName"
-									{...register("lastName", { required: true })}
+									name="last_name"
+									{...register("last_name", { required: true })}
 								/>
 
 								<label id="label-input">Apellido</label>
 							</div>
-							{errors.lastName && (
+							{errors.last_name && (
 								<p className="text-red-500">Ingrese un Apellido</p>
 							)}
 						</div>
+
 						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="user"
-									{...register("user", { required: true })}
+							<div className="w-full flex flex-col gap-3">
+								<label className="" htmlFor="document_type">
+									Tipo de Documento:
+								</label>
+								<Select
+									className="w-full text-center"
+									name="document_type"
+									id="document_type"
+									onChange={(item) => setSelectedDocument(item)}
+									options={optDocuments}
+									isSearchable={false}
+									required
+									placeholder="Seleccione un documento"
 								/>
-								<label id="label-input">Usuario</label>
 							</div>
-							{errors.user && (
-								<p className="text-red-500">Ingrese un Usuario</p>
-							)}
-						</div>
-						<div>
-							<div className="w-full flex justify-between gap-3">
-								<label className="">Tipo de Documento:</label>
-								<select
-									className="flex-1 text-center rounded-2xl"
-									name="typeDocument"
-									id="estado"
-									{...register("typeDocument", { required: true })}
-								>
-									<option value="">Seleccione un documento</option>
-									<option value="DNI">DNI</option>
-									<option value="RUC">RUC</option>
-								</select>
-							</div>
-							{errors.typeDocument && (
-								<p className="text-red-500">Seleccione un documento</p>
-							)}
 						</div>
 						<div>
 							<div className="relative">
@@ -106,8 +106,8 @@ const NuevoEmpleado = () => {
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
-									name="documento"
-									{...register("documento", {
+									name="document_number"
+									{...register("document_number", {
 										required: true,
 										minLength: 8,
 										maxLength: 11,
@@ -115,7 +115,7 @@ const NuevoEmpleado = () => {
 								/>
 								<label id="label-input">Nº Documento</label>
 							</div>
-							{errors.documento && (
+							{errors.document_number && (
 								<p className="text-red-500">
 									Documento debe tener como minimo 8 y maximo 11 digitos
 								</p>
@@ -126,7 +126,7 @@ const NuevoEmpleado = () => {
 						<div>
 							<div className="relative">
 								<input
-									type="email"
+									type="text"
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
@@ -145,7 +145,7 @@ const NuevoEmpleado = () => {
 						<div>
 							<div className="relative">
 								<input
-									type="number"
+									type="text"
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
@@ -175,54 +175,39 @@ const NuevoEmpleado = () => {
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
-									name="addrees"
-									{...register("addrees", { required: true })}
+									name="address"
+									{...register("address", { required: true })}
 								/>
 								<label id="label-input">Dirección</label>
 							</div>
-							{errors.addrees && (
+							{errors.address && (
 								<p className="text-red-500">
 									Ingrese una dirección de residencia
 								</p>
 							)}
 						</div>
 						<div>
-							<div className="w-full flex justify-between gap-3">
-								<label className="" htmlFor="estado">
-									Estado:
+							<div className="w-full flex flex-col gap-2">
+								<label htmlFor="permisos">
+									Selecciones los permisos del empleado:
 								</label>
-								<select
-									className="flex-1 text-center rounded-2xl"
-									name="estado"
-									id="estado"
-									{...register("estado", { required: true })}
-								>
-									<option value="">Seleccione estado</option>
-									<option value="activo">Activo</option>
-									<option value="inactivo">Inactivo</option>
-								</select>
-							</div>
-							{errors.estado && (
-								<p className="text-red-500">Seleccione un estado de empleado</p>
-							)}
-						</div>
-					</div>
-					<div className="flex flex-col items-center flex-1 gap-4 bg-[#0000001c] p-3 rounded-xl">
-						<label htmlFor="foto">Ingrese foto Perfil</label>
-						<input
-							type="file"
-							id="foto"
-							name="profileImage"
-							onChange={handleImageChange}
-						/>
 
-						{selectedImage && (
-							<img
-								src={selectedImage}
-								alt="Imagen seleccionada"
-								className="rounded-3xl w-[350px] h-[350px] object-cover"
-							/>
-						)}
+								<Select
+									styles={colorStyles}
+									components={animatedComponents}
+									isMulti
+									name="permissions"
+									required
+									id="permissions"
+									options={optPermisions}
+									onChange={(item) => setSelectedPermission(item)}
+									isClearable={false} // evita que se pueda borrar la seleccion en grupo
+									isSearchable={false} //evita buscar escribiendo
+									closeMenuOnSelect={false} //evita que se cierre el menu al seleccione solo una opcion
+									placeholder="Selecciona permisos"
+								/>
+							</div>
+						</div>
 					</div>
 				</div>
 				<BtnAdd btnName={"Añadir Empleado"} />
