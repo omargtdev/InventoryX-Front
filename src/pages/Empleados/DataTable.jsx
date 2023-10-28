@@ -5,16 +5,17 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
-import DangerModal from "../../components/Modals/DeleteModal";
 import employeeService from "../../services/employee.service";
 import { useUserStore } from "../../store/useUserStore";
+import { MODAL_TYPES, useGlobalModalContext } from "../../components/Modals/GlobalModal";
 
 const DataTable = ({ employees, setEmployees }) => {
+	const { showModal } = useGlobalModalContext();
+
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 
-	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [userSelectedForDelete, setUserSelectedForDelete] = useState(null);
 	const token = useUserStore(state => state.token);
 
@@ -26,30 +27,41 @@ const DataTable = ({ employees, setEmployees }) => {
 		setCurrentPage(pageNumber);
 	};
 
-	const handleDeleteUser = (employee) => {
-		setShowDeleteModal(true);
-		setUserSelectedForDelete(employee);
-	}
-
 	const deleteUser = async () => {
 		if (!userSelectedForDelete) {
-			alert("No se pudo eliminar el usuario. Consulte con TI")
-			setShowDeleteModal(false);
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content: "Hubo un error al eliminar el empleado. Intentelo denuevo por favor",
+			});
 			return;
 		}
 
 		const { isOk, errorMessage } = await employeeService.deleteEmployee(token, userSelectedForDelete.id);
 		if (!isOk) {
-			alert(errorMessage);
-			setShowDeleteModal(false);
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content: errorMessage,
+			});
 			return;
 		}
 
-		alert("El usuario fue eliminado satisfactoriamente!");
 		const employeesMinusEmployeeDeleted = employees.filter(employee => employee.id != userSelectedForDelete.id);
 		setEmployees(employeesMinusEmployeeDeleted);
-		setShowDeleteModal(false);
+		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+			title: "Eliminación exitosa",
+			content: "El empleado se eliminó correctamente"
+		});
 	};
+
+	const handleDeleteUser = (employee) => {
+		setUserSelectedForDelete(employee);
+		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
+			title: "Eliminar empleado",
+			content: `¿Está seguro de eliminar al empleado ${employee.name} ${employee.last_name}?`,
+			btnText: "Aceptar",
+			acceptAction: deleteUser
+		})
+	}
 
 	const maxVisiblePages = 3;
 
@@ -280,15 +292,6 @@ const DataTable = ({ employees, setEmployees }) => {
 					</ul>
 				</div>
 			</div>
-			<DangerModal
-				title={"Eliminar empleado"}
-				content={
-					`¿Está seguro de eliminar el empleado ${userSelectedForDelete?.name} ${userSelectedForDelete?.last_name}?`
-				}
-				btnAcceptText={"Eliminar"}
-				handleAccept={deleteUser}
-				state={[showDeleteModal, setShowDeleteModal]}
-			/>
 		</>
 	);
 };
