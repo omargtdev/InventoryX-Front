@@ -4,6 +4,10 @@ import RequestModel from "./models/RequestModel";
 
 const getEmployees = async (token) => {
 	const request = new RequestModel(`${env.IDENTITY_API_URL}/admin/users`);
+	request.queryParams = {
+		limit: 30,
+		page: 1
+	}
 	request.bearerToken = token;
 	const { isOk, errorMessage, data } = await apiService.GET(request);
 	return {
@@ -17,7 +21,6 @@ const addEmployee = async (token, employeeData) => {
 	const request = new RequestModel(`${env.IDENTITY_API_URL}/admin/users`);
 	request.bearerToken = token;
 	request.body = employeeData;
-	console.log(request);
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
@@ -64,9 +67,22 @@ const updateEmployeeById = async (token, id, updatedEmployeeData) => {
 	}
 };
 
+const deleteEmployee = async (token, id) => {
+	const url = `${env.IDENTITY_API_URL}/admin/users/${id}`;
+	const request = new RequestModel(url);
+	request.bearerToken = token;
+
+	const { isOk, errorMessage } = await apiService.DELETE(request);
+	return {
+		isOk,
+		errorMessage
+	};
+}
+
 export default {
 	getEmployees,
 	addEmployee,
 	getEmployeeById,
 	updateEmployeeById,
+	deleteEmployee
 };

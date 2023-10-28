@@ -25,7 +25,7 @@ class RequestModel {
 
 		let queriesResult = "?";
 		for(const property in this.queryParams)
-			queriesResult += `${property}=${queries[property]}&`;
+			queriesResult += `${property}=${this.queryParams[property]}&`;
 		queriesResult = queriesResult.slice(0, -1);
 
 		return queriesResult;

@@ -81,12 +81,13 @@ const DELETE = async (request) => {
 			headers,
 			method: "DELETE",
 		});
-		const data = await response.json();
 
 		result.isOk = response.ok;
 
-		if (result.isOk) result.data = data;
-		else result.errorMessage = data.message;
+		if (!result.isOk){
+			const data = await response.json();
+			result.errorMessage = data;
+		}
 
 		return result;
 	} catch (error) {

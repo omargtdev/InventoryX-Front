@@ -5,11 +5,18 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
+import DangerModal from "../../components/Modals/DeleteModal";
+import employeeService from "../../services/employee.service";
+import { useUserStore } from "../../store/useUserStore";
 
-const DataTable = ({ employees }) => {
+const DataTable = ({ employees, setEmployees }) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
+
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [userSelectedForDelete, setUserSelectedForDelete] = useState(null);
+	const token = useUserStore(state => state.token);
 
 	const itemsPerPage = 5;
 	const indexOfLastItem = currentPage * itemsPerPage;
@@ -17,6 +24,31 @@ const DataTable = ({ employees }) => {
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const handleDeleteUser = (employee) => {
+		setShowDeleteModal(true);
+		setUserSelectedForDelete(employee);
+	}
+
+	const deleteUser = async () => {
+		if (!userSelectedForDelete) {
+			alert("No se pudo eliminar el usuario. Consulte con TI")
+			setShowDeleteModal(false);
+			return;
+		}
+
+		const { isOk, errorMessage } = await employeeService.deleteEmployee(token, userSelectedForDelete.id);
+		if (!isOk) {
+			alert(errorMessage);
+			setShowDeleteModal(false);
+			return;
+		}
+
+		alert("El usuario fue eliminado satisfactoriamente!");
+		const employeesMinusEmployeeDeleted = employees.filter(employee => employee.id != userSelectedForDelete.id);
+		setEmployees(employeesMinusEmployeeDeleted);
+		setShowDeleteModal(false);
 	};
 
 	const maxVisiblePages = 3;
@@ -80,10 +112,6 @@ const DataTable = ({ employees }) => {
 
 	const handleFilter = (status) => {
 		setFilterStatus(status);
-	};
-
-	const deleteUser = (id) => {
-		console.log(`Deleting user with id ${id}`);
 	};
 
 	return (
@@ -194,9 +222,8 @@ const DataTable = ({ employees }) => {
 												{data.phone}
 											</td>
 											<td
-												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${
-													data.is_active ? "text-green-500" : "text-red-500"
-												}`}
+												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${data.is_active ? "text-green-500" : "text-red-500"
+													}`}
 											>
 												{data.is_active ? "Activo" : "Inactivo"}
 											</td>
@@ -214,7 +241,7 @@ const DataTable = ({ employees }) => {
 													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
-													onClick={() => deleteUser(data.id)}
+													onClick={() => handleDeleteUser(data)}
 													className="bg-red-600 rounded-lg"
 												>
 													<AiOutlineDelete className="text-white text-2xl p-1 " />
@@ -235,11 +262,10 @@ const DataTable = ({ employees }) => {
 									<span className="px-3 py-2">...</span>
 								) : (
 									<button
-										className={`${
-											pageNumber === currentPage
-												? "bg-[#3a87bb] text-white"
-												: "bg-white"
-										} px-3 py-2 rounded-lg`}
+										className={`${pageNumber === currentPage
+											? "bg-[#3a87bb] text-white"
+											: "bg-white"
+											} px-3 py-2 rounded-lg`}
 										onClick={() => {
 											if (pageNumber !== "...") {
 												handlePageChange(pageNumber);
@@ -254,6 +280,15 @@ const DataTable = ({ employees }) => {
 					</ul>
 				</div>
 			</div>
+			<DangerModal
+				title={"Eliminar empleado"}
+				content={
+					`¿Está seguro de eliminar el empleado ${userSelectedForDelete?.name} ${userSelectedForDelete?.last_name}?`
+				}
+				btnAcceptText={"Eliminar"}
+				handleAccept={deleteUser}
+				state={[showDeleteModal, setShowDeleteModal]}
+			/>
 		</>
 	);
 };

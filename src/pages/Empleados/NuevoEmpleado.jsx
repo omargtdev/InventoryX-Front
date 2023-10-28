@@ -7,12 +7,17 @@ import makeAnimated from "react-select/animated";
 import { useUserStore } from "../../store/useUserStore";
 
 import { optPermisions, optDocuments, colorStyles } from "./Selects.jsx";
+import CustomModal from "../../components/Modals/CustomModal";
+import SuccessCheckSvg from "../../components/Icons/SuccessCheckSvg";
 
 const NuevoEmpleado = () => {
 	const [selectedDocument, setSelectedDocument] = useState([]);
 	const [selectedPermission, setSelectedPermission] = useState([]);
 	const token = useUserStore((state) => state.token);
 	const animatedComponents = makeAnimated(); //animar el select al quitar ubna selección
+
+	const [showEmployeeCreatedModal, setShowEmployeeCreatedModal] = useState(false);
+	const [employeeCreated, setEmployeeCreated] = useState(null);
 
 	const {
 		register,
@@ -30,12 +35,12 @@ const NuevoEmpleado = () => {
 
 		try {
 			// Enviar los datos del nuevo empleado al servidor y obtener una respuesta con el nuevo empleado
-			const response = await employeeService.addEmployee(token, employeeData);
-			console.log(response);
-			if (response.isOk) {
-				alert("Empleado agregado exitosamente");
+			const { errorMessage, employee, isOk } = await employeeService.addEmployee(token, employeeData);
+			if (isOk) {
+				setEmployeeCreated(employee);
+				setShowEmployeeCreatedModal(true);
 			} else {
-				alert(response.errorMessage);
+				alert(errorMessage);
 			}
 		} catch (error) {
 			console.error(error);
@@ -212,6 +217,37 @@ const NuevoEmpleado = () => {
 				</div>
 				<BtnAdd btnName={"Añadir Empleado"} />
 			</form>
+
+			<CustomModal
+				show={showEmployeeCreatedModal}
+			>
+				<div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+					<div className="sm:flex sm:items-start">
+						<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+							<SuccessCheckSvg />
+						</div>
+						<div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+							<h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Credenciales generadas para el usuario</h3>
+							<div className="mt-3 flex justify-between items-center">
+								<label className="font-bold">Usuario: </label>
+								<input type="text" name="username" value={employeeCreated?.username} readOnly className="py-1.5 pl-2 text-gray-900 sm:text-sm sm:leading-6" />
+							</div>
+							<div className="mt-3 flex justify-between items-center">
+								<label className="font-bold">Contraseña: </label>
+								<input type="text" name="password" value={employeeCreated?.temporal_password} readOnly className="py-1.5 pl-2 text-gray-900 sm:text-sm sm:leading-6" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+					<button
+						type="button"
+						className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
+						onClick={() => setShowEmployeeCreatedModal(false)}>
+						Aceptar
+					</button>
+				</div>
+			</CustomModal>
 		</div>
 	);
 };
