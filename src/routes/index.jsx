@@ -14,14 +14,11 @@ const Ventas = lazy(() => import("../pages/Transacciones/Ventas"));
 const Compras = lazy(() => import("../pages/Transacciones/Compras"));
 
 // Catalogo
-const Productos = lazy(() => import("../pages/Catalogo/Productos"));
-const Categorias = lazy(() => import("../pages/Catalogo/Categorias"));
-const Marcas = lazy(() => import("../pages/Catalogo/Marcas"));
-const SubCategorias = lazy(() => import("../pages/Catalogo/SubCategorias"));
+const Products = lazy(() => import("../pages/Catalogo/Products/Products"));
+const Categories = lazy(() => import("../pages/Catalogo/Categories/Categories"));
 
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
 const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
-const Usuarios = lazy(() => import("../pages/Usuarios/Usuarios"));
 const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
 
 const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
@@ -82,15 +79,7 @@ export const router = createBrowserRouter([
 						path: "productos",
 						element: (
 							<Suspense>
-								<Productos />
-							</Suspense>
-						),
-					},
-					{
-						path: "marcas",
-						element: (
-							<Suspense>
-								<Marcas />
+								<Products />
 							</Suspense>
 						),
 					},
@@ -98,15 +87,7 @@ export const router = createBrowserRouter([
 						path: "categorias",
 						element: (
 							<Suspense>
-								<Categorias />
-							</Suspense>
-						),
-					},
-					{
-						path: "subCategorias",
-						element: (
-							<Suspense>
-								<SubCategorias />
+								<Categories />
 							</Suspense>
 						),
 					},
