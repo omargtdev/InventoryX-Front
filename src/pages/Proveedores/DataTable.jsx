@@ -5,12 +5,23 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
-import { defaultData } from "./MOCK_DATA";
+import providerService from "../../services/providers.service";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal";
+import { useUserStore } from "../../store/useUserStore";
 
-const DataTable = () => {
+const DataTable = ({ providers, setProviders }) => {
+	const { showModal } = useGlobalModalContext();
+
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
+
+	const [providerSelectedForDelete, setProviderSelectedForDelete] =
+		useState(null);
+	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
 	const indexOfLastItem = currentPage * itemsPerPage;
@@ -18,6 +29,47 @@ const DataTable = () => {
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const deleteProvider = async () => {
+		if (!providerSelectedForDelete) {
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content:
+					"Hubo un error al eliminar el Proveedor. Intentelo denuevo por favor",
+			});
+			return;
+		}
+
+		const { isOk, errorMessage } = await providerService.deleteProvider(
+			providerSelectedForDelete.id
+		);
+		if (!isOk) {
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content: errorMessage,
+			});
+			return;
+		}
+
+		const providersMinusProviderDeleted = providers.filter(
+			(provider) => provider.id != providerSelectedForDelete.id
+		);
+		setProviders(providersMinusProviderDeleted);
+		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+			title: "Eliminación exitosa",
+			content: "El Proveedor se eliminó correctamente",
+		});
+	};
+
+	const handleDeleteProvider = (providers) => {
+		setProviderSelectedForDelete(providers);
+		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
+			title: "Eliminar Proveedor",
+			content: `¿Está seguro de eliminar al Proveedor ${providers.businessName}?`,
+			btnText: "Aceptar",
+			acceptAction: deleteProvider,
+		});
 	};
 
 	const maxVisiblePages = 3;
@@ -52,10 +104,8 @@ const DataTable = () => {
 		return pageNumbers;
 	};
 
-	const filterData = defaultData.filter(
-		(data) =>
-			data.name.toLowerCase().includes(search.toLowerCase()) ||
-			data.last_name.toLowerCase().includes(search.toLowerCase())
+	const filterData = providers.filter(
+		(data) => data.businessName.toLowerCase().includes(search.toLowerCase())
 		// data.email.toLowerCase().includes(search.toLowerCase()) ||
 		// data.phone.toString().includes(search)
 	);
@@ -83,10 +133,6 @@ const DataTable = () => {
 		setFilterStatus(status);
 	};
 
-	const deleteUser = (id) => {
-		console.log(`Deleting user with id ${id}`);
-	};
-
 	return (
 		<>
 			<div className="flex flex-col w-full">
@@ -102,7 +148,7 @@ const DataTable = () => {
 					</div>
 					<div>
 						<Link
-							to="/nuevo-cliente"
+							to="/nuevo-proveedor"
 							className=" border-[#3a87bb] border px-10 py-2 rounded-2xl text-[#3a87bb] font-medium hover:bg-[#3a87bb] hover:text-white duration-500 ease-in-out"
 						>
 							Nuevo Proveedor
@@ -131,14 +177,30 @@ const DataTable = () => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Apellido
+											Ruc
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Fecha de Registro
+											Email
 										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										>
+											Phone
+										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										>
+											Direccion
+										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										></th>
 									</tr>
 								</thead>
 								<tbody className="border-black border-b-2">
@@ -148,16 +210,23 @@ const DataTable = () => {
 											className="bg-white border-b-2 border-black"
 										>
 											<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 ">
-												{data.codigo}
+												{index + 1}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.name}
+												{data.businessName}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.last_name}
+												{data.ruc}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.date_register}
+												{data.contactEmail}
+											</td>
+											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
+												{data.contactPhone}
+											</td>
+
+											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
+												{data.address}
 											</td>
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
@@ -173,7 +242,7 @@ const DataTable = () => {
 													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
-													onClick={() => deleteUser(data.id)}
+													onClick={() => handleDeleteProvider(data)}
 													className="bg-red-600 rounded-lg"
 												>
 													<AiOutlineDelete className="text-white text-2xl p-1 " />

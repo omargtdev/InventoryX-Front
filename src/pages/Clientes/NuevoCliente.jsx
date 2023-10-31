@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import BtnAdd from "../../components/BtnAdd";
 import { useForm } from "react-hook-form";
-import employeeService from "../../services/employee.service";
+import clientService from "../../services/client.service";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { useUserStore } from "../../store/useUserStore";
 import { optPermisions, optDocuments, colorStyles } from "./Selects.jsx";
-import { MODAL_TYPES, useGlobalModalContext } from "../../components/Modals/GlobalModal";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal";
 
-const NuevoEmpleado = () => {
+const NuevoCliente = () => {
 	const { showModal } = useGlobalModalContext();
 
 	const [selectedDocument, setSelectedDocument] = useState([]);
@@ -22,33 +25,37 @@ const NuevoEmpleado = () => {
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = handleSubmit(async (employeeData) => {
+	const onSubmit = handleSubmit(async (clientData) => {
+		// Agrega los permisos seleccionados al objeto clientData
+		//const permissions = selectedPermission.map((option) => option.value);
+		//clientData.permissions = permissions;
+		clientData.documentType = selectedDocument.value;
+		clientData.isLegal = true;
 
-		// Agrega los permisos seleccionados al objeto employeeData
-		const permissions = selectedPermission.map((option) => option.value);
-		employeeData.permissions = permissions;
-		employeeData.document_type = selectedDocument.value;
+		//clientData.newClient = 1;
 
 		// Enviar los datos del nuevo empleado al servidor y obtener una respuesta con el nuevo empleado
-		const { errorMessage, employee, isOk } = await employeeService.addEmployee(token, employeeData);
+		const { errorMessage, client, isOk } = await clientService.addClient(
+			clientData
+		);
 		if (isOk) {
-			showModal(MODAL_TYPES.EMPLOYEE.CREDENTIALS_GENERATED, {
-				username: employee.username,
-				password: employee.temporal_password
+			showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+				title: "Creación exitosa",
+				content: "El Cliente se agregó correctamente",
 			});
 			return;
 		}
 
 		showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 			title: "Ocurrio un error",
-			content: errorMessage
+			content: errorMessage,
 		});
 	});
 
 	return (
 		<div className="w-full p-10 mt-10">
 			<div>
-				<h1 className="text-3xl font-bold mb-10">Nuevo Empleado</h1>
+				<h1 className="text-3xl font-bold mb-10">Nuevo Cliente</h1>
 			</div>
 			<form onSubmit={onSubmit} className="flex flex-col items-center gap-20 ">
 				<div className="flex gap-3 justify-around w-full">
@@ -67,33 +74,16 @@ const NuevoEmpleado = () => {
 							</div>
 							{errors.name && <p className="text-red-500">Ingrese un Nombre</p>}
 						</div>
-						<div>
-							<div className="relative">
-								<input
-									type="text"
-									className="input-cal input-base"
-									id="input"
-									placeholder=""
-									name="last_name"
-									{...register("last_name", { required: true })}
-								/>
-
-								<label id="label-input">Apellido</label>
-							</div>
-							{errors.last_name && (
-								<p className="text-red-500">Ingrese un Apellido</p>
-							)}
-						</div>
 
 						<div>
 							<div className="w-full flex flex-col gap-3">
-								<label className="" htmlFor="document_type">
+								<label className="" htmlFor="documentType">
 									Tipo de Documento:
 								</label>
 								<Select
 									className="w-full text-center"
-									name="document_type"
-									id="document_type"
+									name="documentType"
+									id="documentType"
 									onChange={(item) => setSelectedDocument(item)}
 									options={optDocuments}
 									isSearchable={false}
@@ -109,8 +99,8 @@ const NuevoEmpleado = () => {
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
-									name="document_number"
-									{...register("document_number", {
+									name="documentNumber"
+									{...register("documentNumber", {
 										required: true,
 										minLength: 8,
 										maxLength: 11,
@@ -118,7 +108,7 @@ const NuevoEmpleado = () => {
 								/>
 								<label id="label-input">Nº Documento</label>
 							</div>
-							{errors.document_number && (
+							{errors.documentNumber && (
 								<p className="text-red-500">
 									Documento debe tener como minimo 8 y maximo 11 digitos
 								</p>
@@ -129,7 +119,7 @@ const NuevoEmpleado = () => {
 						<div>
 							<div className="relative">
 								<input
-									type="text"
+									type="email"
 									className="input-cal input-base"
 									id="input"
 									placeholder=""
@@ -151,26 +141,44 @@ const NuevoEmpleado = () => {
 									type="text"
 									className="input-cal input-base"
 									id="input"
-									placeholder=""
+									placeholder="Celular"
 									name="phone"
 									{...register("phone", {
 										required: true,
-										minLength: 9,
+										pattern: {
+											value: /^\d{3}-\d{3}-\d{4}$/,
+											message: "El formato debe ser 000-000-0000",
+										},
 										maxLength: 12,
 									})}
+									onChange={(e) => {
+										const input = e.target.value.replace(/\D/g, ""); // Eliminar no números
+										if (input.length > 0) {
+											// Agregar guiones
+											e.target.value = input
+												.match(/(\d{0,3})(\d{0,3})(\d{0,4})/)
+												.slice(1, 4)
+												.filter((group) => group !== "")
+												.join("-");
+										} else {
+											e.target.value = ""; // Si no hay números, el campo queda vacío
+										}
+									}}
 								/>
-								<label id="label-input">Celular</label>
 							</div>
 							{errors.phone?.type === "required" && (
-								<p className="text-red-500">Ingrese un numero de celular</p>
+								<p className="text-red-500">Ingrese un número de celular</p>
 							)}
-							{errors.phone?.type === "minLength" && (
-								<p className="text-red-500">El número debe tener 9 digitos</p>
+							{errors.phone?.type === "pattern" && (
+								<p className="text-red-500">{errors.phone.message}</p>
 							)}
 							{errors.phone?.type === "maxLength" && (
-								<p className="text-red-500">El número debe tener 9 digitos</p>
+								<p className="text-red-500">
+									El número no debe tener más de 12 dígitos
+								</p>
 							)}
 						</div>
+
 						<div>
 							<div className="relative">
 								<input
@@ -189,34 +197,12 @@ const NuevoEmpleado = () => {
 								</p>
 							)}
 						</div>
-						<div>
-							<div className="w-full flex flex-col gap-2">
-								<label htmlFor="permisos">
-									Selecciones los permisos del empleado:
-								</label>
-
-								<Select
-									styles={colorStyles}
-									components={animatedComponents}
-									isMulti
-									name="permissions"
-									required
-									id="permissions"
-									options={optPermisions}
-									onChange={(item) => setSelectedPermission(item)}
-									isClearable={false} // evita que se pueda borrar la seleccion en grupo
-									isSearchable={false} //evita buscar escribiendo
-									closeMenuOnSelect={false} //evita que se cierre el menu al seleccione solo una opcion
-									placeholder="Selecciona permisos"
-								/>
-							</div>
-						</div>
 					</div>
 				</div>
-				<BtnAdd btnName={"Añadir Empleado"} />
+				<BtnAdd btnName={"Añadir Cliente"} />
 			</form>
 		</div>
 	);
 };
 
-export default NuevoEmpleado;
+export default NuevoCliente;
