@@ -5,12 +5,22 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
-import { defaultData } from "./MOCK_DATA";
+import clientService from "../../services/client.service";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal";
+import { useUserStore } from "../../store/useUserStore";
 
-const DataTable = () => {
+const DataTable = ({ clients, setClients }) => {
+	const { showModal } = useGlobalModalContext();
+
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
+
+	const [clientSelectedForDelete, setClientSelectedForDelete] = useState(null);
+	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
 	const indexOfLastItem = currentPage * itemsPerPage;
@@ -18,6 +28,53 @@ const DataTable = () => {
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const deleteClient = async () => {
+		console.log("estoy aqui 1");
+		console.log(clientSelectedForDelete);
+
+		if (!clientSelectedForDelete) {
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content:
+					"Hubo un error al eliminar el Cliente. Intentelo denuevo por favor",
+			});
+			return;
+		}
+		console.log("estoy aqui 2");
+		const { isOk, errorMessage } = await clientService.deleteClient(
+			clientSelectedForDelete.id
+		);
+		if (!isOk) {
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content: errorMessage,
+			});
+			return;
+		}
+		console.log("estoy aqui 3");
+		const clientsMinusClientDeleted = clients.filter(
+			(client) => client.id != clientSelectedForDelete.id
+		);
+		setClients(clientsMinusClientDeleted);
+		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+			title: "Eliminación exitosa",
+			content: "El cliente se eliminó correctamente",
+		});
+		// Reiniciar el estado clientSelectedForDelete después de eliminar
+	};
+
+	const handleDeleteClient = (client) => {
+			setClientSelectedForDelete(client);
+			console.log(client);
+			console.log(clientSelectedForDelete);
+			showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
+				title: "Eliminar Cliente",
+				content: `¿Está seguro de eliminar al cliente ${client.name}?`,
+				btnText: "Aceptar",
+				acceptAction: deleteClient,
+			});
 	};
 
 	const maxVisiblePages = 3;
@@ -52,10 +109,10 @@ const DataTable = () => {
 		return pageNumbers;
 	};
 
-	const filterData = defaultData.filter(
-		(data) =>
-			data.name.toLowerCase().includes(search.toLowerCase()) ||
-			data.last_name.toLowerCase().includes(search.toLowerCase())
+	const filterData = clients.filter(
+		(data) => data.name.toLowerCase().includes(search.toLowerCase())
+		//||
+		//data.last_name.toLowerCase().includes(search.toLowerCase())
 		// data.email.toLowerCase().includes(search.toLowerCase()) ||
 		// data.phone.toString().includes(search)
 	);
@@ -63,9 +120,9 @@ const DataTable = () => {
 	let filteredData;
 
 	if (filterStatus === "Activo") {
-		filteredData = filterData.filter((data) => data.is_active);
+		filteredData = filterData.filter((data) => data.isLegal);
 	} else if (filterStatus === "Inactivo") {
-		filteredData = filterData.filter((data) => !data.is_active);
+		filteredData = filterData.filter((data) => !data.isLegal);
 	} else {
 		filteredData = filterData;
 	}
@@ -81,10 +138,6 @@ const DataTable = () => {
 
 	const handleFilter = (status) => {
 		setFilterStatus(status);
-	};
-
-	const deleteUser = (id) => {
-		console.log(`Deleting user with id ${id}`);
 	};
 
 	return (
@@ -131,7 +184,7 @@ const DataTable = () => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Apellido
+											Email
 										</th>
 										<th
 											scope="col"
@@ -143,7 +196,7 @@ const DataTable = () => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Fecha de Registro
+											Estado
 										</th>
 									</tr>
 								</thead>
@@ -159,14 +212,12 @@ const DataTable = () => {
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
 												{data.name}
 											</td>
+
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.last_name}
+												{data.email}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.documente_number}
-											</td>
-											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.date_register}
+												{data.phone}
 											</td>
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
@@ -182,7 +233,7 @@ const DataTable = () => {
 													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
-													onClick={() => deleteUser(data.id)}
+													onClick={() => handleDeleteClient(data)}
 													className="bg-red-600 rounded-lg"
 												>
 													<AiOutlineDelete className="text-white text-2xl p-1 " />

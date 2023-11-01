@@ -17,14 +17,27 @@ const Compras = lazy(() => import("../pages/Transacciones/Compras"));
 const Products = lazy(() => import("../pages/Catalogo/Products/Products"));
 const Categories = lazy(() => import("../pages/Catalogo/Categories/Categories"));
 
+//Clientes
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
-const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
-const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
+const NuevoCliente = lazy(() => import("../pages/Clientes/NuevoCliente"));
+const EditarCliente = lazy(() => import("../pages/Clientes/EditCliente"));
+const ViewCliente = lazy(() => import("../pages/Clientes/ViewCliente"));
 
+//Empleados
+const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
 const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
 const EditarEmpleado = lazy(() => import("../pages/Empleados/EditEmpleado"));
 const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
 
+//Proveedores
+const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
+const NuevoProveedor = lazy(() =>
+	import("../pages/Proveedores/NuevoProveedor")
+);
+const EditarProveedor = lazy(() =>
+	import("../pages/Proveedores/EditProveedor")
+);
+const ViewProveedor = lazy(() => import("../pages/Proveedores/ViewProveedor"));
 const Almacenes = lazy(() => import("../pages/Almacenes/Almacenes"));
 
 export const router = createBrowserRouter([
@@ -103,6 +116,31 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
+				path: "/nuevo-cliente",
+				element: (
+					<Suspense>
+						<NuevoCliente />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/edit-cliente/:id",
+				element: (
+					<Suspense>
+						<EditarCliente />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/view-cliente/:id",
+				element: (
+					<Suspense>
+						<ViewCliente />,
+					</Suspense>
+				),
+			},
+
+			{
 				path: "/empleados",
 				element: (
 					<Suspense>
@@ -136,12 +174,38 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "/proveedores",
+				index: true,
 				element: (
 					<Suspense>
 						<Proveedores />,
 					</Suspense>
 				),
 			},
+			{
+				path: "/nuevo-proveedor",
+				element: (
+					<Suspense>
+						<NuevoProveedor />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/edit-proveedor/:id",
+				element: (
+					<Suspense>
+						<EditarProveedor />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/view-proveedor/:id",
+				element: (
+					<Suspense>
+						<ViewProveedor />,
+					</Suspense>
+				),
+			},
+
 			{
 				path: "/almacenes",
 				element: (
