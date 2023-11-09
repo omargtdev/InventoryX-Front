@@ -2,30 +2,30 @@ import env from "../config/env";
 import apiService from "./api.service";
 import RequestModel from "./models/RequestModel";
 
-const getClients = async () => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/clients`);
+const getCategories = async () => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/categories`);
 	const { isOk, errorMessage, data } = await apiService.GET(request);
 	return {
 		isOk,
-		clients: data,
+		categories: data,
 		errorMessage,
 	};
 };
 
-const addClient = async (clientData) => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/clients`);
+const addCategorie = async (clientData) => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/categories`);
 	//request.bearerToken = token;
 	request.body = clientData;
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
-		client: data, // Si el servidor devuelve el empleado recién creado
+		categorie: data, // Si el servidor devuelve el empleado recién creado
 		errorMessage,
 	};
 };
 
-const getClientById = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/clients/${id}`;
+const getCategorieById = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -33,36 +33,36 @@ const getClientById = async (id) => {
 		const { isOk, errorMessage, data } = await apiService.GET(request);
 		return {
 			isOk,
-			client: data,
+			categorie: data,
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al visualizar cliente:", error);
+		console.error("Error al visualizar categoria:", error);
 		throw error;
 	}
 };
 
-const updateClientById = async (id, updatedClientData) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/clients/${id}`;
+const updateCategorieById = async (id, updatedCategorieData) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
-	request.body = updatedClientData;
+	request.body = updatedCategorieData;
 
 	try {
 		const { isOk, errorMessage, data } = await apiService.PUT(request);
 		return {
 			isOk,
-			client: data, // Datos del empleado actualizado
+			categorie: data, // Datos del empleado actualizado
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al actualizar cliente:", error);
+		console.error("Error al actualizar categoria:", error);
 		throw error;
 	}
 };
 
-const deleteClient = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/clients/${id}`;
+const deleteCategorie = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -74,9 +74,9 @@ const deleteClient = async (id) => {
 };
 
 export default {
-	getClients,
-	addClient,
-	getClientById,
-	updateClientById,
-	deleteClient,
+	getCategories,
+	addCategorie,
+	getCategorieById,
+	updateCategorieById,
+	deleteCategorie,
 };
