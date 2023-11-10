@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
 	AiOutlineEdit,
@@ -19,8 +19,8 @@ const DataTable = ({ providers, setProviders }) => {
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 
-	const [providerSelectedForDelete, setProviderSelectedForDelete] =
-		useState(null);
+	const [providerDeleted, setProviderDeleted] = useState(null);
+	const [isAccept, setIsAccept] = useState(false);
 	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
@@ -32,7 +32,7 @@ const DataTable = ({ providers, setProviders }) => {
 	};
 
 	const deleteProvider = async () => {
-		if (!providerSelectedForDelete) {
+		if (!providerDeleted) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
 				content:
@@ -42,7 +42,7 @@ const DataTable = ({ providers, setProviders }) => {
 		}
 
 		const { isOk, errorMessage } = await providerService.deleteProvider(
-			providerSelectedForDelete.id
+			providerDeleted.id
 		);
 		if (!isOk) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
@@ -53,24 +53,32 @@ const DataTable = ({ providers, setProviders }) => {
 		}
 
 		const providersMinusProviderDeleted = providers.filter(
-			(provider) => provider.id != providerSelectedForDelete.id
+			(provider) => provider.id != providerDeleted.id
 		);
 		setProviders(providersMinusProviderDeleted);
 		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
 			title: "Eliminación exitosa",
 			content: "El Proveedor se eliminó correctamente",
 		});
+		setProviderDeleted(null);
+		setIsAccept(false);
 	};
 
 	const handleDeleteProvider = (providers) => {
-		setProviderSelectedForDelete(providers);
+		setProviderDeleted(providers);
 		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
 			title: "Eliminar Proveedor",
 			content: `¿Está seguro de eliminar al Proveedor ${providers.businessName}?`,
 			btnText: "Aceptar",
-			acceptAction: deleteProvider,
+			acceptAction: () => setIsAccept(true),
 		});
 	};
+
+	useEffect(() => {
+		if (providerDeleted && isAccept) {
+			deleteProvider();
+		}
+	}, [providerDeleted, isAccept]);
 
 	const maxVisiblePages = 3;
 
@@ -191,12 +199,7 @@ const DataTable = ({ providers, setProviders }) => {
 										>
 											Phone
 										</th>
-										<th
-											scope="col"
-											className="text-sm font-lg text-white px-6 py-4"
-										>
-											Direccion
-										</th>
+
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
@@ -225,9 +228,6 @@ const DataTable = ({ providers, setProviders }) => {
 												{data.contactPhone}
 											</td>
 
-											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.address}
-											</td>
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
 													to={`/view-proveedor/${data.id}`}

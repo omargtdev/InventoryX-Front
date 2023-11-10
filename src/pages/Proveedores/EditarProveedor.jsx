@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import BtnAdd from "../../components/BtnAdd";
+import BtnAdd from "../../components/BtnAdd.jsx";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useUserStore } from "../../store/useUserStore";
+import { useUserStore } from "../../store/useUserStore.js";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import {
@@ -11,10 +11,15 @@ import {
 	optEstado,
 	colorStyles,
 } from "./Selects.jsx";
-import clientService from "../../services/client.service";
-import providersService from "../../services/providers.service";
+import clientService from "../../services/client.service.js";
+import providersService from "../../services/providers.service.js";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal.jsx";
 
-const EditProveedor = () => {
+const EditarProveedor = () => {
+	const { showModal } = useGlobalModalContext();
 	const animatedComponents = makeAnimated();
 	const { id } = useParams(); // Obtén el ID del empleado desde la URL
 	const [selectedPermission, setSelectedPermission] = useState([]);
@@ -43,7 +48,7 @@ const EditProveedor = () => {
 				alert(resultMessage);
 			}
 		} catch (error) {
-			console.error("Error al obtener datos del empleado: ", error);
+			console.error("Error al obtener datos del proveedor: ", error);
 		}
 	};
 
@@ -90,9 +95,15 @@ const EditProveedor = () => {
 			);
 
 			if (response.isOk) {
-				alert("Proveedor actualizado exitosamente");
+				showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+					title: "Actualización exitosa",
+					content: "El Proveedor se actualizó correctamente",
+				});
 			} else {
-				alert(response.errorMessage);
+				showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+					title: "Ocurrio un error",
+					content: response.errorMessage,
+				});
 			}
 		} catch (error) {
 			console.error("Error al actualizar el proveedor: ", error);
@@ -129,7 +140,6 @@ const EditProveedor = () => {
 								<p className="text-red-500">Ingrese sus Nombres</p>
 							)}
 						</div>
-
 
 						<div className="flex flex-col gap-2">
 							<label
@@ -174,7 +184,9 @@ const EditProveedor = () => {
 									pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
 								})}
 							/>
-							{errors.contactEmail && <p className="text-red-500">Ingrese un email</p>}
+							{errors.contactEmail && (
+								<p className="text-red-500">Ingrese un email</p>
+							)}
 						</div>
 						<div className="flex flex-col gap-2">
 							<label
@@ -225,7 +237,6 @@ const EditProveedor = () => {
 								<p className="text-red-500">Ingrese una Direccion</p>
 							)}
 						</div>
-
 					</div>
 				</div>
 				<BtnAdd btnName={"Actualizar Proveedor"} />
@@ -234,4 +245,4 @@ const EditProveedor = () => {
 	);
 };
 
-export default EditProveedor;
+export default EditarProveedor;

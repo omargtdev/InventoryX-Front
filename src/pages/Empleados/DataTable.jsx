@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
 	AiOutlineEdit,
@@ -7,7 +7,10 @@ import {
 } from "react-icons/ai";
 import employeeService from "../../services/employee.service";
 import { useUserStore } from "../../store/useUserStore";
-import { MODAL_TYPES, useGlobalModalContext } from "../../components/Modals/GlobalModal";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal";
 
 const DataTable = ({ employees, setEmployees }) => {
 	const { showModal } = useGlobalModalContext();
@@ -17,7 +20,8 @@ const DataTable = ({ employees, setEmployees }) => {
 	const [filterStatus, setFilterStatus] = useState("all");
 
 	const [userSelectedForDelete, setUserSelectedForDelete] = useState(null);
-	const token = useUserStore(state => state.token);
+	const [isAccept, setIsAccept] = useState(false);
+	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
 	const indexOfLastItem = currentPage * itemsPerPage;
@@ -28,16 +32,19 @@ const DataTable = ({ employees, setEmployees }) => {
 	};
 
 	const deleteUser = async () => {
-		console.log("llego aqui")
 		if (!userSelectedForDelete) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
-				content: "Hubo un error al eliminar el empleado. Intentelo denuevo por favor",
+				content:
+					"Hubo un error al eliminar el empleado. Intentelo denuevo por favor",
 			});
 			return;
 		}
 
-		const { isOk, errorMessage } = await employeeService.deleteEmployee(token, userSelectedForDelete.id);
+		const { isOk, errorMessage } = await employeeService.deleteEmployee(
+			token,
+			userSelectedForDelete.id
+		);
 		if (!isOk) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
@@ -46,12 +53,16 @@ const DataTable = ({ employees, setEmployees }) => {
 			return;
 		}
 
-		const employeesMinusEmployeeDeleted = employees.filter(employee => employee.id != userSelectedForDelete.id);
+		const employeesMinusEmployeeDeleted = employees.filter(
+			(employee) => employee.id != userSelectedForDelete.id
+		);
 		setEmployees(employeesMinusEmployeeDeleted);
 		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
 			title: "Eliminación exitosa",
-			content: "El empleado se eliminó correctamente"
+			content: "El empleado se eliminó correctamente",
 		});
+		setUserSelectedForDelete(null);
+		setIsAccept(false);
 	};
 
 	const handleDeleteUser = (employee) => {
@@ -60,9 +71,15 @@ const DataTable = ({ employees, setEmployees }) => {
 			title: "Eliminar empleado",
 			content: `¿Está seguro de eliminar al empleado ${employee.name} ${employee.last_name}?`,
 			btnText: "Aceptar",
-			acceptAction: deleteUser
-		})
-	}
+			acceptAction: () => setIsAccept(true),
+		});
+	};
+
+	useEffect(() => {
+		if (userSelectedForDelete && isAccept) {
+			deleteUser();
+		}
+	}, [userSelectedForDelete, isAccept]);
 
 	const maxVisiblePages = 3;
 
@@ -211,6 +228,12 @@ const DataTable = ({ employees, setEmployees }) => {
 										>
 											Estado
 										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										>
+											
+										</th>
 									</tr>
 								</thead>
 								<tbody className="border-black border-b-2">
@@ -235,8 +258,9 @@ const DataTable = ({ employees, setEmployees }) => {
 												{data.phone}
 											</td>
 											<td
-												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${data.is_active ? "text-green-500" : "text-red-500"
-													}`}
+												className={`text-base text-gray-900  px-6 py-4 whitespace-nowrap ${
+													data.is_active ? "text-green-500" : "text-red-500"
+												}`}
 											>
 												{data.is_active ? "Activo" : "Inactivo"}
 											</td>
@@ -275,10 +299,11 @@ const DataTable = ({ employees, setEmployees }) => {
 									<span className="px-3 py-2">...</span>
 								) : (
 									<button
-										className={`${pageNumber === currentPage
-											? "bg-[#3a87bb] text-white"
-											: "bg-white"
-											} px-3 py-2 rounded-lg`}
+										className={`${
+											pageNumber === currentPage
+												? "bg-[#3a87bb] text-white"
+												: "bg-white"
+										} px-3 py-2 rounded-lg`}
 										onClick={() => {
 											if (pageNumber !== "...") {
 												handlePageChange(pageNumber);

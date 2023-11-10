@@ -42,9 +42,7 @@ const NuevoProveedor = () => {
 				content:
 					"El Proveedor se agregó correctamente " + provider.businessName,
 			});
-			// Redirige a la página deseada
-			window.location.href = "/proveedores"; // Reemplaza "/ruta-de-destino" con la URL de la página a la que deseas redirigir.
-
+			return;
 		}
 
 		showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {

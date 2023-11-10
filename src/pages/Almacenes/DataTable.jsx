@@ -5,14 +5,14 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
-import clientService from "../../services/client.service";
+import warehouseService from "../../services/warehouses.service";
 import {
 	MODAL_TYPES,
 	useGlobalModalContext,
 } from "../../components/Modals/GlobalModal";
 import { useUserStore } from "../../store/useUserStore";
 
-const DataTable = ({ clients, setClients }) => {
+const DataTable = ({ warehouses, setWarehouses }) => {
 	const { showModal } = useGlobalModalContext();
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -29,40 +29,39 @@ const DataTable = ({ clients, setClients }) => {
 		setCurrentPage(pageNumber);
 	};
 
-	const [clientDeleted, setClientDeleted] = useState(null);
+	const [warehouseDeteled, setWarehouseDeleted] = useState(null);
 	const [isAccept, setIsAccept] = useState(false);
 
-	const handleDeleteClient = (client) => {
-		// Esperar a que clientDeleted se haya actualizado
+	const handleDeleteWarehouse = (warehouse) => {
+		// Esperar a que warehouseDeteled se haya actualizado
 		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
-			title: "Eliminar Cliente",
-			content: `¿Está seguro de eliminar al cliente ${client.name}?`,
+			title: "Eliminar Almacen",
+			content: `¿Está seguro de eliminar al almacen ${warehouse.name}?`,
 			btnText: "Aceptar",
 			acceptAction: () => setIsAccept(true),
 		});
-		setClientDeleted(client);
+		setWarehouseDeleted(warehouse);
 	};
 
 	useEffect(() => {
-		if (clientDeleted && isAccept) {
-			deleteClient();
+		if (warehouseDeteled && isAccept) {
+			deleteWarehouse();
 		}
-	}, [clientDeleted, isAccept]);
+	}, [warehouseDeteled, isAccept]);
 
-	const deleteClient = async () => {
-
-		if (!clientDeleted) {
+	const deleteWarehouse = async () => {
+		if (!warehouseDeteled) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
 				content:
-					"Hubo un error al eliminar el Cliente. Intentelo denuevo por favor",
+					"Hubo un error al eliminar el Almacen. Intentelo denuevo por favor",
 			});
 			return;
 		}
 
 		// Ahora puedes realizar la eliminación aquí
-		const { isOk, errorMessage } = await clientService.deleteClient(
-			clientDeleted.id
+		const { isOk, errorMessage } = await warehouseService.deleteWarehouse(
+			warehouseDeteled.id
 		);
 		if (!isOk) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
@@ -71,17 +70,17 @@ const DataTable = ({ clients, setClients }) => {
 			});
 			return;
 		}
-		const clientsMinusClientDeleted = clients.filter(
-			(client) => client.id !== clientDeleted.id
+		const warehousesMinuswarehouseDeteled = warehouses.filter(
+			(warehouse) => warehouse.id !== warehouseDeteled.id
 		);
-		setClients(clientsMinusClientDeleted);
+		setWarehouses(warehousesMinuswarehouseDeteled);
 		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
 			title: "Eliminación exitosa",
-			content: "El cliente se eliminó correctamente",
+			content: "El Almacen se eliminó correctamente",
 		});
 
-		// Reiniciar el estado clientDeleted después de eliminar
-		setClientDeleted(null);
+		// Reiniciar el estado warehouseDeteled después de eliminar
+		setWarehouseDeleted(null);
 		setIsAccept(false);
 	};
 
@@ -117,16 +116,16 @@ const DataTable = ({ clients, setClients }) => {
 		return pageNumbers;
 	};
 
-	const filterData = clients.filter((data) =>
+	const filterData = warehouses.filter((data) =>
 		data.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	let filteredData;
 
 	if (filterStatus === "Activo") {
-		filteredData = filterData.filter((data) => data.isLegal);
+		filteredData = filterData.filter((data) => data.is_active);
 	} else if (filterStatus === "Inactivo") {
-		filteredData = filterData.filter((data) => !data.isLegal);
+		filteredData = filterData.filter((data) => !data.is_active);
 	} else {
 		filteredData = filterData;
 	}
@@ -152,7 +151,7 @@ const DataTable = ({ clients, setClients }) => {
 						<input
 							type="text"
 							className="px-2 py-2 text-gray-600 border border-gray-300 rounded outline-[#3a87bb]"
-							placeholder="Buscar Cliente..."
+							placeholder="Buscar Almacen..."
 							value={search}
 							onChange={handleSearchChange}
 						/>
@@ -160,10 +159,10 @@ const DataTable = ({ clients, setClients }) => {
 
 					<div>
 						<Link
-							to="/nuevo-cliente"
+							to="/nuevo-almacen"
 							className=" border-[#3a87bb] border px-10 py-2 rounded-2xl text-[#3a87bb] font-medium hover:bg-[#3a87bb] hover:text-white duration-500 ease-in-out"
 						>
-							Nuevo Cliente
+							Nuevo almacen
 						</Link>
 					</div>
 				</div>
@@ -189,31 +188,24 @@ const DataTable = ({ clients, setClients }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Tipo Documento
+											Descripcion
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Nro Documento
+											Stock
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Email
+											Direccion
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
-										>
-											Celular
-										</th>
-										<th
-											scope="col"
-											className="text-sm font-lg text-white px-6 py-4"
-										>
-										</th>
+										></th>
 									</tr>
 								</thead>
 								<tbody className="border-black border-b-2">
@@ -229,34 +221,32 @@ const DataTable = ({ clients, setClients }) => {
 												{data.name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.documentTypeName}
+												{data.description}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.documentNumber}
+												{data.maxStock}
 											</td>
 
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.email}
-											</td>
-											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.phone}
+												{data.address}-{data.province}-{data.city}-
+												{data.district}
 											</td>
 
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
-													to={`/view-cliente/${data.id}`}
+													to={`/view-almacen/${data.id}`}
 													className="bg-teal-600 rounded-lg"
 												>
 													<AiOutlineFolderView className="text-white text-2xl p-1" />
 												</Link>
 												<Link
-													to={`/edit-cliente/${data.id}`}
+													to={`/edit-almacen/${data.id}`}
 													className="bg-blue-600 rounded-lg"
 												>
 													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
-													onClick={() => handleDeleteClient(data)}
+													onClick={() => handleDeleteWarehouse(data)}
 													className="bg-red-600 rounded-lg"
 												>
 													<AiOutlineDelete className="text-white text-2xl p-1" />
