@@ -32,14 +32,16 @@ const ViewCategoria = lazy(() =>
 //Clientes
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
 const NuevoCliente = lazy(() => import("../pages/Clientes/NuevoCliente"));
-const EditarCliente = lazy(() => import("../pages/Clientes/EditCliente"));
+const EditarCliente = lazy(() => import("../pages/Clientes/EditarCliente"));
 const ViewCliente = lazy(() => import("../pages/Clientes/ViewCliente"));
 
 //Empleados
 const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
 const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
-const EditarEmpleado = lazy(() => import("../pages/Empleados/EditEmpleado"));
+const EditarEmpleado = lazy(() => import("../pages/Empleados/EditarEmpleado"));
 const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
+
+const Usuarios = lazy(() => import("../pages/Usuarios/Usuarios"));
 
 //Proveedores
 const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
@@ -47,10 +49,15 @@ const NuevoProveedor = lazy(() =>
 	import("../pages/Proveedores/NuevoProveedor")
 );
 const EditarProveedor = lazy(() =>
-	import("../pages/Proveedores/EditProveedor")
+	import("../pages/Proveedores/EditarProveedor")
 );
 const ViewProveedor = lazy(() => import("../pages/Proveedores/ViewProveedor"));
+
+//Almacenes
 const Almacenes = lazy(() => import("../pages/Almacenes/Almacenes"));
+const NuevoAlmacen = lazy(() => import("../pages/Almacenes/NuevoAlmacen"));
+const EditarAlmacen = lazy(() => import("../pages/Almacenes/EditarAlmacen"));
+const ViewAlmacen = lazy(() => import("../pages/Almacenes/ViewAlmacen"));
 
 export const router = createBrowserRouter([
 	{
@@ -244,9 +251,34 @@ export const router = createBrowserRouter([
 
 			{
 				path: "/almacenes",
+				index: true,
 				element: (
 					<Suspense>
 						<Almacenes />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/nuevo-almacen",
+				element: (
+					<Suspense>
+						<NuevoAlmacen />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/edit-almacen/:id",
+				element: (
+					<Suspense>
+						<EditarAlmacen />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/view-almacen/:id",
+				element: (
+					<Suspense>
+						<ViewAlmacen />,
 					</Suspense>
 				),
 			},

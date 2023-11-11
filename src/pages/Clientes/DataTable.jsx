@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
 	AiOutlineEdit,
@@ -19,7 +19,6 @@ const DataTable = ({ clients, setClients }) => {
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 
-	const [clientSelectedForDelete, setClientSelectedForDelete] = useState(null);
 	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
@@ -30,11 +29,29 @@ const DataTable = ({ clients, setClients }) => {
 		setCurrentPage(pageNumber);
 	};
 
-	const deleteClient = async () => {
-		console.log("estoy aqui 1");
-		console.log(clientSelectedForDelete);
+	const [clientDeleted, setClientDeleted] = useState(null);
+	const [isAccept, setIsAccept] = useState(false);
 
-		if (!clientSelectedForDelete) {
+	const handleDeleteClient = (client) => {
+		// Esperar a que clientDeleted se haya actualizado
+		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
+			title: "Eliminar Cliente",
+			content: `¿Está seguro de eliminar al cliente ${client.name}?`,
+			btnText: "Aceptar",
+			acceptAction: () => setIsAccept(true),
+		});
+		setClientDeleted(client);
+	};
+
+	useEffect(() => {
+		if (clientDeleted && isAccept) {
+			deleteClient();
+		}
+	}, [clientDeleted, isAccept]);
+
+	const deleteClient = async () => {
+
+		if (!clientDeleted) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
 				content:
@@ -42,9 +59,10 @@ const DataTable = ({ clients, setClients }) => {
 			});
 			return;
 		}
-		console.log("estoy aqui 2");
+
+		// Ahora puedes realizar la eliminación aquí
 		const { isOk, errorMessage } = await clientService.deleteClient(
-			clientSelectedForDelete.id
+			clientDeleted.id
 		);
 		if (!isOk) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
@@ -53,28 +71,18 @@ const DataTable = ({ clients, setClients }) => {
 			});
 			return;
 		}
-		console.log("estoy aqui 3");
 		const clientsMinusClientDeleted = clients.filter(
-			(client) => client.id != clientSelectedForDelete.id
+			(client) => client.id !== clientDeleted.id
 		);
 		setClients(clientsMinusClientDeleted);
 		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
 			title: "Eliminación exitosa",
 			content: "El cliente se eliminó correctamente",
 		});
-		// Reiniciar el estado clientSelectedForDelete después de eliminar
-	};
 
-	const handleDeleteClient = (client) => {
-			setClientSelectedForDelete(client);
-			console.log(client);
-			console.log(clientSelectedForDelete);
-			showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
-				title: "Eliminar Cliente",
-				content: `¿Está seguro de eliminar al cliente ${client.name}?`,
-				btnText: "Aceptar",
-				acceptAction: deleteClient,
-			});
+		// Reiniciar el estado clientDeleted después de eliminar
+		setClientDeleted(null);
+		setIsAccept(false);
 	};
 
 	const maxVisiblePages = 3;
@@ -109,12 +117,8 @@ const DataTable = ({ clients, setClients }) => {
 		return pageNumbers;
 	};
 
-	const filterData = clients.filter(
-		(data) => data.name.toLowerCase().includes(search.toLowerCase())
-		//||
-		//data.last_name.toLowerCase().includes(search.toLowerCase())
-		// data.email.toLowerCase().includes(search.toLowerCase()) ||
-		// data.phone.toString().includes(search)
+	const filterData = clients.filter((data) =>
+		data.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	let filteredData;
@@ -163,7 +167,7 @@ const DataTable = ({ clients, setClients }) => {
 					</div>
 				</div>
 				<div className="overflow-x-auto w-full sm:-mx-6 items-center lg:-mx-8">
-					<div className="py-4 inline-block w-full sm:px-6 lg:px-8">
+					<div className="py-4 inline-block w-full sm:px-4 lg:px-6">
 						<div className="overflow-hidden">
 							<table className="w-full text-center">
 								<thead className="border-b bg-gray-800">
@@ -184,6 +188,18 @@ const DataTable = ({ clients, setClients }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
+											Tipo Documento
+										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										>
+											Nro Documento
+										</th>
+										<th
+											scope="col"
+											className="text-sm font-lg text-white px-6 py-4"
+										>
 											Email
 										</th>
 										<th
@@ -196,7 +212,6 @@ const DataTable = ({ clients, setClients }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Estado
 										</th>
 									</tr>
 								</thead>
@@ -211,6 +226,12 @@ const DataTable = ({ clients, setClients }) => {
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
 												{data.name}
+											</td>
+											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
+												{data.documentTypeName}
+											</td>
+											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
+												{data.documentNumber}
 											</td>
 
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
@@ -236,7 +257,7 @@ const DataTable = ({ clients, setClients }) => {
 													onClick={() => handleDeleteClient(data)}
 													className="bg-red-600 rounded-lg"
 												>
-													<AiOutlineDelete className="text-white text-2xl p-1 " />
+													<AiOutlineDelete className="text-white text-2xl p-1" />
 												</button>
 											</td>
 										</tr>
@@ -276,5 +297,4 @@ const DataTable = ({ clients, setClients }) => {
 		</>
 	);
 };
-
 export default DataTable;

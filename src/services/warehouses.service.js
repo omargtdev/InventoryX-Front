@@ -2,30 +2,30 @@ import env from "../config/env";
 import apiService from "./api.service";
 import RequestModel from "./models/RequestModel";
 
-const getProviders = async () => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/providers`);
+const getWarehouses = async () => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/warehouses`);
 	const { isOk, errorMessage, data } = await apiService.GET(request);
 	return {
 		isOk,
-		providers: data,
+		warehouses: data,
 		errorMessage,
 	};
 };
 
-const addProvider = async (providerData) => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/providers`);
+const addWarehouse = async (warehouseData) => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/warehouses`);
 	//request.bearerToken = token;
-	request.body = providerData;
+	request.body = warehouseData;
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
-		provider: data, // Si el servidor devuelve el empleado recién creado
+		warehouse: data, // Si el servidor devuelve el almacen recién creado
 		errorMessage,
 	};
 };
 
-const getProviderById = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/providers/${id}`;
+const getWarehouseById = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/warehouses/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -33,36 +33,36 @@ const getProviderById = async (id) => {
 		const { isOk, errorMessage, data } = await apiService.GET(request);
 		return {
 			isOk,
-			provider: data,
+			warehouse: data,
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al visualizar proveedor:", error);
+		console.error("Error al visualizar almacen:", error);
 		throw error;
 	}
 };
 
-const updateProviderById = async (id, updatedProviderData) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/providers/${id}`;
+const updateWarehouseById = async (id, updatedwarehouseData) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/warehouses/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
-	request.body = updatedProviderData;
+	request.body = updatedwarehouseData;
 
 	try {
 		const { isOk, errorMessage, data } = await apiService.PUT(request);
 		return {
 			isOk,
-			provider: data, // Datos del proveedor actualizado
+			warehouse: data, // Datos del almacen actualizado
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al actualizar proveedor:", error);
+		console.error("Error al actualizar almacen:", error);
 		throw error;
 	}
 };
 
-const deleteProvider = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/providers/${id}`;
+const deleteWarehouse = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/warehouses/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -74,9 +74,9 @@ const deleteProvider = async (id) => {
 };
 
 export default {
-	getProviders,
-	addProvider,
-	getProviderById,
-	updateProviderById,
-	deleteProvider,
+	getWarehouses,
+	addWarehouse,
+	getWarehouseById,
+	updateWarehouseById,
+	deleteWarehouse,
 };

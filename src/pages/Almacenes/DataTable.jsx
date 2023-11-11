@@ -5,22 +5,20 @@ import {
 	AiOutlineDelete,
 	AiOutlineFolderView,
 } from "react-icons/ai";
-import providerService from "../../services/providers.service";
+import warehouseService from "../../services/warehouses.service";
 import {
 	MODAL_TYPES,
 	useGlobalModalContext,
 } from "../../components/Modals/GlobalModal";
 import { useUserStore } from "../../store/useUserStore";
 
-const DataTable = ({ providers, setProviders }) => {
+const DataTable = ({ warehouses, setWarehouses }) => {
 	const { showModal } = useGlobalModalContext();
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 
-	const [providerDeleted, setProviderDeleted] = useState(null);
-	const [isAccept, setIsAccept] = useState(false);
 	const token = useUserStore((state) => state.token);
 
 	const itemsPerPage = 5;
@@ -31,18 +29,39 @@ const DataTable = ({ providers, setProviders }) => {
 		setCurrentPage(pageNumber);
 	};
 
-	const deleteProvider = async () => {
-		if (!providerDeleted) {
+	const [warehouseDeteled, setWarehouseDeleted] = useState(null);
+	const [isAccept, setIsAccept] = useState(false);
+
+	const handleDeleteWarehouse = (warehouse) => {
+		// Esperar a que warehouseDeteled se haya actualizado
+		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
+			title: "Eliminar Almacen",
+			content: `¿Está seguro de eliminar al almacen ${warehouse.name}?`,
+			btnText: "Aceptar",
+			acceptAction: () => setIsAccept(true),
+		});
+		setWarehouseDeleted(warehouse);
+	};
+
+	useEffect(() => {
+		if (warehouseDeteled && isAccept) {
+			deleteWarehouse();
+		}
+	}, [warehouseDeteled, isAccept]);
+
+	const deleteWarehouse = async () => {
+		if (!warehouseDeteled) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
 				title: "Ocurrio un error",
 				content:
-					"Hubo un error al eliminar el Proveedor. Intentelo denuevo por favor",
+					"Hubo un error al eliminar el Almacen. Intentelo denuevo por favor",
 			});
 			return;
 		}
 
-		const { isOk, errorMessage } = await providerService.deleteProvider(
-			providerDeleted.id
+		// Ahora puedes realizar la eliminación aquí
+		const { isOk, errorMessage } = await warehouseService.deleteWarehouse(
+			warehouseDeteled.id
 		);
 		if (!isOk) {
 			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
@@ -51,34 +70,19 @@ const DataTable = ({ providers, setProviders }) => {
 			});
 			return;
 		}
-
-		const providersMinusProviderDeleted = providers.filter(
-			(provider) => provider.id != providerDeleted.id
+		const warehousesMinuswarehouseDeteled = warehouses.filter(
+			(warehouse) => warehouse.id !== warehouseDeteled.id
 		);
-		setProviders(providersMinusProviderDeleted);
+		setWarehouses(warehousesMinuswarehouseDeteled);
 		showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
 			title: "Eliminación exitosa",
-			content: "El Proveedor se eliminó correctamente",
+			content: "El Almacen se eliminó correctamente",
 		});
-		setProviderDeleted(null);
+
+		// Reiniciar el estado warehouseDeteled después de eliminar
+		setWarehouseDeleted(null);
 		setIsAccept(false);
 	};
-
-	const handleDeleteProvider = (providers) => {
-		setProviderDeleted(providers);
-		showModal(MODAL_TYPES.GENERIC.DELETE_MODAL, {
-			title: "Eliminar Proveedor",
-			content: `¿Está seguro de eliminar al Proveedor ${providers.businessName}?`,
-			btnText: "Aceptar",
-			acceptAction: () => setIsAccept(true),
-		});
-	};
-
-	useEffect(() => {
-		if (providerDeleted && isAccept) {
-			deleteProvider();
-		}
-	}, [providerDeleted, isAccept]);
 
 	const maxVisiblePages = 3;
 
@@ -112,10 +116,8 @@ const DataTable = ({ providers, setProviders }) => {
 		return pageNumbers;
 	};
 
-	const filterData = providers.filter(
-		(data) => data.businessName.toLowerCase().includes(search.toLowerCase())
-		// data.email.toLowerCase().includes(search.toLowerCase()) ||
-		// data.phone.toString().includes(search)
+	const filterData = warehouses.filter((data) =>
+		data.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	let filteredData;
@@ -149,22 +151,23 @@ const DataTable = ({ providers, setProviders }) => {
 						<input
 							type="text"
 							className="px-2 py-2 text-gray-600 border border-gray-300 rounded outline-[#3a87bb]"
-							placeholder="Buscar Proveedor..."
+							placeholder="Buscar Almacen..."
 							value={search}
 							onChange={handleSearchChange}
 						/>
 					</div>
+
 					<div>
 						<Link
-							to="/nuevo-proveedor"
+							to="/nuevo-almacen"
 							className=" border-[#3a87bb] border px-10 py-2 rounded-2xl text-[#3a87bb] font-medium hover:bg-[#3a87bb] hover:text-white duration-500 ease-in-out"
 						>
-							Nuevo Proveedor
+							Nuevo almacen
 						</Link>
 					</div>
 				</div>
 				<div className="overflow-x-auto w-full sm:-mx-6 items-center lg:-mx-8">
-					<div className="py-4 inline-block w-full sm:px-6 lg:px-8">
+					<div className="py-4 inline-block w-full sm:px-4 lg:px-6">
 						<div className="overflow-hidden">
 							<table className="w-full text-center">
 								<thead className="border-b bg-gray-800">
@@ -173,7 +176,7 @@ const DataTable = ({ providers, setProviders }) => {
 											scope="col"
 											className="text-sm font-medium text-white px-6 py-4"
 										>
-											Codigo
+											#
 										</th>
 										<th
 											scope="col"
@@ -185,19 +188,19 @@ const DataTable = ({ providers, setProviders }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Ruc
+											Descripcion
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Email
+											Stock
 										</th>
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Phone
+											Direccion
 										</th>
 										<th
 											scope="col"
@@ -215,36 +218,38 @@ const DataTable = ({ providers, setProviders }) => {
 												{index + 1}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.businessName}
+												{data.name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.ruc}
+												{data.description}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.contactEmail}
+												{data.maxStock}
 											</td>
+
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.contactPhone}
+												{data.address}-{data.province}-{data.city}-
+												{data.district}
 											</td>
 
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
-													to={`/view-proveedor/${data.id}`}
+													to={`/view-almacen/${data.id}`}
 													className="bg-teal-600 rounded-lg"
 												>
 													<AiOutlineFolderView className="text-white text-2xl p-1" />
 												</Link>
 												<Link
-													to={`/edit-proveedor/${data.id}`}
+													to={`/edit-almacen/${data.id}`}
 													className="bg-blue-600 rounded-lg"
 												>
 													<AiOutlineEdit className="text-white text-2xl p-1 " />
 												</Link>
 												<button
-													onClick={() => handleDeleteProvider(data)}
+													onClick={() => handleDeleteWarehouse(data)}
 													className="bg-red-600 rounded-lg"
 												>
-													<AiOutlineDelete className="text-white text-2xl p-1 " />
+													<AiOutlineDelete className="text-white text-2xl p-1" />
 												</button>
 											</td>
 										</tr>
@@ -284,5 +289,4 @@ const DataTable = ({ providers, setProviders }) => {
 		</>
 	);
 };
-
 export default DataTable;
