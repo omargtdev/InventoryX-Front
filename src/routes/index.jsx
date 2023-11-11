@@ -29,19 +29,17 @@ const ViewCategoria = lazy(() =>
 	import("../pages/Catalogo/Categories/ViewCategoria")
 );
 
+//Empleados
+const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
+const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
+const EditarEmpleado = lazy(() => import("../pages/Empleados/EditEmpleado"));
+const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
+
 //Clientes
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
 const NuevoCliente = lazy(() => import("../pages/Clientes/NuevoCliente"));
 const EditarCliente = lazy(() => import("../pages/Clientes/EditarCliente"));
 const ViewCliente = lazy(() => import("../pages/Clientes/ViewCliente"));
-
-//Empleados
-const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
-const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
-const EditarEmpleado = lazy(() => import("../pages/Empleados/EditarEmpleado"));
-const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
-
-const Usuarios = lazy(() => import("../pages/Usuarios/Usuarios"));
 
 //Proveedores
 const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
