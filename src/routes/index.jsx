@@ -15,7 +15,19 @@ const Compras = lazy(() => import("../pages/Transacciones/Compras"));
 
 // Catalogo
 const Products = lazy(() => import("../pages/Catalogo/Products/Products"));
-const Categories = lazy(() => import("../pages/Catalogo/Categories/Categories"));
+
+const Categories = lazy(() =>
+	import("../pages/Catalogo/Categories/Categories")
+);
+const NuevaCategoria = lazy(() =>
+	import("../pages/Catalogo/Categories/NuevaCategoria")
+);
+const EditarCategoria = lazy(() =>
+	import("../pages/Catalogo/Categories/EditCategoria")
+);
+const ViewCategoria = lazy(() =>
+	import("../pages/Catalogo/Categories/ViewCategoria")
+);
 
 //Clientes
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
@@ -105,6 +117,30 @@ export const router = createBrowserRouter([
 						),
 					},
 				],
+			},
+			{
+				path: "/nueva-categoria",
+				element: (
+					<Suspense>
+						<NuevaCategoria />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/edit-categoria/:id",
+				element: (
+					<Suspense>
+						<EditarCategoria />,
+					</Suspense>
+				),
+			},
+			{
+				path: "/view-categoria/:id",
+				element: (
+					<Suspense>
+						<ViewCategoria />,
+					</Suspense>
+				),
 			},
 			{
 				path: "/clientes",
