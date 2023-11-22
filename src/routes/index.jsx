@@ -14,32 +14,29 @@ const Ventas = lazy(() => import("../pages/Transacciones/Ventas"));
 const Compras = lazy(() => import("../pages/Transacciones/Compras"));
 
 // Catalogo
-const Products = lazy(() => import("../pages/Catalogo/Products/Products"));
+const Categorias = lazy(() => import("../pages/Catalogo/Categorias"));
+const Marcas = lazy(() => import("../pages/Catalogo/Marcas"));
+const SubCategorias = lazy(() => import("../pages/Catalogo/SubCategorias"));
 
-const Categories = lazy(() =>
-	import("../pages/Catalogo/Categories/Categories")
-);
-const NuevaCategoria = lazy(() =>
-	import("../pages/Catalogo/Categories/NuevaCategoria")
-);
-const EditarCategoria = lazy(() =>
-	import("../pages/Catalogo/Categories/EditCategoria")
-);
-const ViewCategoria = lazy(() =>
-	import("../pages/Catalogo/Categories/ViewCategoria")
-);
-
-//Empleados
-const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
-const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
-const EditarEmpleado = lazy(() => import("../pages/Empleados/EditEmpleado"));
-const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
+//Productos
+const Productos = lazy(() => import("../pages/Productos/Productos"));
+const NuevoProducto = lazy(() => import("../pages/Productos/NuevoProducto"));
+const EditarProducto = lazy(() => import("../pages/Productos/EditarProducto"));
+const ViewProducto = lazy(() => import("../pages/Productos/ViewProducto"));
 
 //Clientes
 const Clientes = lazy(() => import("../pages/Clientes/Clientes"));
 const NuevoCliente = lazy(() => import("../pages/Clientes/NuevoCliente"));
 const EditarCliente = lazy(() => import("../pages/Clientes/EditarCliente"));
 const ViewCliente = lazy(() => import("../pages/Clientes/ViewCliente"));
+
+//Empleados
+const Empleados = lazy(() => import("../pages/Empleados/Empleados"));
+const NuevoEmpleado = lazy(() => import("../pages/Empleados/NuevoEmpleado"));
+const EditarEmpleado = lazy(() => import("../pages/Empleados/EditarEmpleado"));
+const ViewEmpleado = lazy(() => import("../pages/Empleados/ViewEmpleado"));
+
+const Usuarios = lazy(() => import("../pages/Usuarios/Usuarios"));
 
 //Proveedores
 const Proveedores = lazy(() => import("../pages/Proveedores/Proveedores"));
@@ -109,7 +106,39 @@ export const router = createBrowserRouter([
 						path: "productos",
 						element: (
 							<Suspense>
-								<Products />
+								<Productos />
+							</Suspense>
+						),
+					},
+					{
+						path: "productos/nuevo-producto",
+						element: (
+							<Suspense>
+								<NuevoProducto />
+							</Suspense>
+						),
+					},
+					{
+						path: "productos/edit-producto/:id",
+						element: (
+							<Suspense>
+								<EditarProducto />,
+							</Suspense>
+						),
+					},
+					{
+						path: "productos/view-producto/:id",
+						element: (
+							<Suspense>
+								<ViewProducto />,
+							</Suspense>
+						),
+					},
+					{
+						path: "marcas",
+						element: (
+							<Suspense>
+								<Marcas />
 							</Suspense>
 						),
 					},
@@ -117,35 +146,19 @@ export const router = createBrowserRouter([
 						path: "categorias",
 						element: (
 							<Suspense>
-								<Categories />
+								<Categorias />
+							</Suspense>
+						),
+					},
+					{
+						path: "subCategorias",
+						element: (
+							<Suspense>
+								<SubCategorias />
 							</Suspense>
 						),
 					},
 				],
-			},
-			{
-				path: "/nueva-categoria",
-				element: (
-					<Suspense>
-						<NuevaCategoria />,
-					</Suspense>
-				),
-			},
-			{
-				path: "/edit-categoria/:id",
-				element: (
-					<Suspense>
-						<EditarCategoria />,
-					</Suspense>
-				),
-			},
-			{
-				path: "/view-categoria/:id",
-				element: (
-					<Suspense>
-						<ViewCategoria />,
-					</Suspense>
-				),
 			},
 			{
 				path: "/clientes",

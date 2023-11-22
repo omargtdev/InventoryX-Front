@@ -199,6 +199,7 @@ const DataTable = ({ providers, setProviders }) => {
 										>
 											Phone
 										</th>
+
 										<th
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
