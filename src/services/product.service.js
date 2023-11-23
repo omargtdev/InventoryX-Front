@@ -2,30 +2,30 @@ import env from "../config/env";
 import apiService from "./api.service";
 import RequestModel from "./models/RequestModel";
 
-const getCategories = async () => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/categories`);
+const getProducts = async () => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/products`);
 	const { isOk, errorMessage, data } = await apiService.GET(request);
 	return {
 		isOk,
-		categories: data,
+		products: data,
 		errorMessage,
 	};
 };
 
-const addCategorie = async (clientData) => {
-	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/categories`);
+const addProduct = async (clientData) => {
+	const request = new RequestModel(`${env.TRANSACTIONAL_API_URL}/products`);
 	//request.bearerToken = token;
 	request.body = clientData;
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
-		categorie: data, // Si el servidor devuelve el empleado recién creado
+		product: data, // Si el servidor devuelve el producto recién creado
 		errorMessage,
 	};
 };
 
-const getCategorieById = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
+const getProductById = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/products/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -33,36 +33,36 @@ const getCategorieById = async (id) => {
 		const { isOk, errorMessage, data } = await apiService.GET(request);
 		return {
 			isOk,
-			categorie: data,
+			product: data,
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al visualizar categoria:", error);
+		console.error("Error al visualizar producto:", error);
 		throw error;
 	}
 };
 
-const updateCategorieById = async (id, updatedCategorieData) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
+const updateProductById = async (id, updatedProductData) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/products/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
-	request.body = updatedCategorieData;
+	request.body = updatedProductData;
 
 	try {
 		const { isOk, errorMessage, data } = await apiService.PUT(request);
 		return {
 			isOk,
-			categorie: data, // Datos del empleado actualizado
+			product: data, // Datos del producto actualizado
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al actualizar categoria:", error);
+		console.error("Error al actualizar producto:", error);
 		throw error;
 	}
 };
 
-const deleteCategorie = async (id) => {
-	const url = `${env.TRANSACTIONAL_API_URL}/categories/${id}`;
+const deleteProduct = async (id) => {
+	const url = `${env.TRANSACTIONAL_API_URL}/products/${id}`;
 	const request = new RequestModel(url);
 	//request.bearerToken = token;
 
@@ -74,9 +74,9 @@ const deleteCategorie = async (id) => {
 };
 
 export default {
-	getCategories,
-	addCategorie,
-	getCategorieById,
-	updateCategorieById,
-	deleteCategorie,
+	getProducts,
+	addProduct,
+	getProductById,
+	updateProductById,
+	deleteProduct,
 };

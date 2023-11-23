@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "./DataTable";
-import clientService from "../../services/client.service";
+import productService from "../../services/product.service";
 import { useUserStore } from "../../store/useUserStore";
 
-const Cliente = () => {
-	const [clients, setClients] = useState([]);
+const Productos = () => {
+	const [products, setProducts] = useState([]);
 	const token = useUserStore((state) => state.token);
 
 	const fetchData = async () => {
-		const { isOk, clients, resultMessage } = await clientService.getClients(
+		const { isOk, products, resultMessage } = await productService.getProducts(
 			token
 		);
 		if (!isOk) alert(resultMessage);
 
-		setClients(clients);
+		setProducts(products);
 	};
 
 	useEffect(() => {
@@ -22,11 +22,10 @@ const Cliente = () => {
 
 	return (
 		<div className="flex flex-col py-10 w-full ">
-			<h1 className="text-3xl font-bold">Clientes</h1>
-			<DataTable clients={clients} setClients={setClients} />
+			<h1 className="text-3xl font-bold">Productos</h1>
+			<DataTable products={products} setProducts={setProducts} />
 		</div>
 	);
 };
 
-
-export default Cliente;
+export default Productos;
