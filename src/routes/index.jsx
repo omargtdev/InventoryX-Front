@@ -14,9 +14,10 @@ const Ventas = lazy(() => import("../pages/Transacciones/Salidas/Ventas"));
 const Compras = lazy(() => import("../pages/Transacciones/Entradas/Compras"));
 
 // Catalogo
-const Categorias = lazy(() => import("../pages/Catalogo/Categorias"));
-const Marcas = lazy(() => import("../pages/Catalogo/Marcas"));
-const SubCategorias = lazy(() => import("../pages/Catalogo/SubCategorias"));
+const Categorias = lazy(() => import("../pages/Categorias/Categorias"));
+const NuevaCategoria = lazy(() => import("../pages/Categorias/NuevaCategoria"));
+const EditarCategoria = lazy(() => import("../pages/Categorias/EditCategoria"));
+const ViewCategoria = lazy(() => import("../pages/Categorias/ViewCategoria"));
 
 //Productos
 const Productos = lazy(() => import("../pages/Productos/Productos"));
@@ -135,14 +136,6 @@ export const router = createBrowserRouter([
 						),
 					},
 					{
-						path: "marcas",
-						element: (
-							<Suspense>
-								<Marcas />
-							</Suspense>
-						),
-					},
-					{
 						path: "categorias",
 						element: (
 							<Suspense>
@@ -151,43 +144,32 @@ export const router = createBrowserRouter([
 						),
 					},
 					{
-						path: "subCategorias",
+						path: "categorias/nueva-categoria",
 						element: (
 							<Suspense>
-								<SubCategorias />
+								<NuevaCategoria />
+							</Suspense>
+						),
+					},
+					{
+						path: "categorias/edit-categoria/:id",
+						element: (
+							<Suspense>
+								<EditarCategoria />
+							</Suspense>
+						),
+					},
+					{
+						path: "categorias/view-categoria/:id",
+						element: (
+							<Suspense>
+								<ViewCategoria />
 							</Suspense>
 						),
 					},
 				],
 			},
 			{
-<<<<<<< HEAD
-				path: "/nueva-categoria",
-				element: (
-					<Suspense>
-						<NuevaCategoria />
-					</Suspense>
-				),
-			},
-			{
-				path: "/edit-categoria/:id",
-				element: (
-					<Suspense>
-						<EditarCategoria />
-					</Suspense>
-				),
-			},
-			{
-				path: "/view-categoria/:id",
-				element: (
-					<Suspense>
-						<ViewCategoria />
-					</Suspense>
-				),
-			},
-			{
-=======
->>>>>>> 47e8acdce419899c3713ad5e9540769b68679ba6
 				path: "/clientes",
 				index: true,
 				element: (

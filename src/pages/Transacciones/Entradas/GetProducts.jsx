@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Modal from "../../../components/Modals/GetProducts/Modal";
 
 import {
 	AiOutlineSearch,
@@ -10,6 +11,7 @@ import {
 const GetProducts = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [tableData, setTableData] = useState([]);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const [isUnlocked, setIsUnlocked] = useState(true);
 
@@ -53,6 +55,15 @@ const GetProducts = () => {
 		// Lógica para limpiar datos
 		console.log("Limpiando datos...");
 	};
+
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+
 	return (
 		<div>
 			<div className="flex justify-between items-center mt-10">
@@ -124,7 +135,10 @@ const GetProducts = () => {
 								{tableData.map((fila, index) => (
 									<tr key={index} className="bg-white border-b-2 border-black ">
 										<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap ">
-											<button className="bg-teal-600 hover:bg-teal-500 duration-300 rounded-lg">
+											<button
+												className="bg-teal-600 rounded-lg"
+												onClick={openModal}
+											>
 												<AiOutlineSearch className="text-white text-2xl p-1" />
 											</button>
 											{isUnlocked ? (
@@ -189,6 +203,7 @@ const GetProducts = () => {
 					</div>
 				</div>
 			</div>
+			<Modal />
 		</div>
 	);
 };
