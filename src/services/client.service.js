@@ -37,7 +37,7 @@ const getClientById = async (id) => {
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al visualizar cliente:", error);
+		console.error("Error al visualizar empleado:", error);
 		throw error;
 	}
 };
@@ -56,7 +56,7 @@ const updateClientById = async (id, updatedClientData) => {
 			errorMessage,
 		};
 	} catch (error) {
-		console.error("Error al actualizar cliente:", error);
+		console.error("Error al actualizar empleado:", error);
 		throw error;
 	}
 };

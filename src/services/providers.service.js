@@ -19,7 +19,7 @@ const addProvider = async (providerData) => {
 	const { isOk, errorMessage, data } = await apiService.POST(request);
 	return {
 		isOk,
-		provider: data, // Si el servidor devuelve el empleado recién creado
+		provider: data, // Si el servidor devuelve el proveedor recién creado
 		errorMessage,
 	};
 };

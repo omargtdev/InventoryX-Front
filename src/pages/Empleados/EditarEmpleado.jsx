@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import BtnAdd from "../../components/BtnAdd";
+import BtnAdd from "../../components/BtnAdd.jsx";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import employeeService from "../../services/employee.service";
-import { useUserStore } from "../../store/useUserStore";
+import employeeService from "../../services/employee.service.js";
+import { useUserStore } from "../../store/useUserStore.js";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import {
@@ -12,8 +12,13 @@ import {
 	optEstado,
 	colorStyles,
 } from "./Selects.jsx";
+import {
+	MODAL_TYPES,
+	useGlobalModalContext,
+} from "../../components/Modals/GlobalModal.jsx";
 
-const EditEmpleado = () => {
+const EditarEmpleado = () => {
+	const { showModal } = useGlobalModalContext();
 	const animatedComponents = makeAnimated();
 	const { id } = useParams(); // Obtén el ID del empleado desde la URL
 	const [selectedPermission, setSelectedPermission] = useState([]);
@@ -108,9 +113,15 @@ const EditEmpleado = () => {
 			);
 
 			if (response.isOk) {
-				alert("Empleado actualizado exitosamente");
+				showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+					title: "Actualización exitosa",
+					content: "El Empleado se actualizó correctamente",
+				});
 			} else {
-				alert(response.errorMessage);
+				showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+					title: "Ocurrio un error",
+					content: response.errorMessage,
+				});
 			}
 		} catch (error) {
 			console.error("Error al actualizar el empleado: ", error);
@@ -268,7 +279,7 @@ const EditEmpleado = () => {
 								className="font-semibold text-lg font-sans-montserrat"
 								htmlFor="phone"
 							>
-								Celular
+								phone
 							</label>
 							<input
 								className="text-center font-sans-montserrat py-1 rounded-lg "
@@ -277,7 +288,11 @@ const EditEmpleado = () => {
 								placeholder=""
 								name="phone"
 								disabled
-								{...register("phone")}
+								{...register("phone", {
+									required: true,
+									minLength: 9,
+									maxLength: 9,
+								})}
 							/>
 
 							{errors.phone?.type === "required" && (
@@ -369,4 +384,4 @@ const EditEmpleado = () => {
 	);
 };
 
-export default EditEmpleado;
+export default EditarEmpleado;

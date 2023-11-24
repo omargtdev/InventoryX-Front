@@ -157,6 +157,7 @@ const DataTable = ({ clients, setClients }) => {
 							onChange={handleSearchChange}
 						/>
 					</div>
+
 					<div>
 						<Link
 							to="/nuevo-cliente"
@@ -240,6 +241,7 @@ const DataTable = ({ clients, setClients }) => {
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
 												{data.phone}
 											</td>
+
 											<td className="text-sm flex justify-center items-center  text-gray-900 font-bold  py-4 gap-2 whitespace-nowrap w-fit">
 												<Link
 													to={`/view-cliente/${data.id}`}
