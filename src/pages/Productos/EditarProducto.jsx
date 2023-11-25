@@ -289,7 +289,7 @@ const EditarProducto = () => {
 						</div>
 					</div>
 				</div>
-				<BtnAdd btnName={"Actualizar producte"} />
+				<BtnAdd btnName={"Actualizar producto"} />
 			</form>
 		</div>
 	);

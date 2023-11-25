@@ -5,6 +5,7 @@ import Login from "../pages/Login/Login";
 import Dashboard from "../pages/Dashboard";
 
 import { LoginUseProvider } from "../context/login/LoginUseProvider";
+import env from "../config/env";
 
 //inicio
 const Welcome = lazy(() => import("../pages/Welcome"));
@@ -55,9 +56,11 @@ const NuevoAlmacen = lazy(() => import("../pages/Almacenes/NuevoAlmacen"));
 const EditarAlmacen = lazy(() => import("../pages/Almacenes/EditarAlmacen"));
 const ViewAlmacen = lazy(() => import("../pages/Almacenes/ViewAlmacen"));
 
+
+console.log(env.BASE_URL);
 export const router = createBrowserRouter([
 	{
-		path: "/login",
+		path: `${env.BASE_URL}login`,
 		element: (
 			<LoginUseProvider>
 				<Login />
@@ -65,11 +68,11 @@ export const router = createBrowserRouter([
 		),
 	},
 	{
-		path: "/",
+		path: `${env.BASE_URL}`,
 		element: <Dashboard />,
 		children: [
 			{
-				path: "/inicio",
+				path: "inicio",
 				index: true,
 				element: (
 					<Suspense>
@@ -78,7 +81,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/transacciones",
+				path: "transacciones",
 				element: <Outlet />,
 				children: [
 					{
@@ -100,7 +103,7 @@ export const router = createBrowserRouter([
 				],
 			},
 			{
-				path: "/catalogo",
+				path: "catalogo",
 				element: <Outlet />,
 				children: [
 					{
@@ -170,7 +173,7 @@ export const router = createBrowserRouter([
 				],
 			},
 			{
-				path: "/clientes",
+				path: "clientes",
 				index: true,
 				element: (
 					<Suspense>
@@ -179,7 +182,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/nuevo-cliente",
+				path: "nuevo-cliente",
 				element: (
 					<Suspense>
 						<NuevoCliente />
@@ -187,7 +190,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/edit-cliente/:id",
+				path: "edit-cliente/:id",
 				element: (
 					<Suspense>
 						<EditarCliente />
@@ -195,7 +198,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/view-cliente/:id",
+				path: "view-cliente/:id",
 				element: (
 					<Suspense>
 						<ViewCliente />
@@ -204,7 +207,7 @@ export const router = createBrowserRouter([
 			},
 
 			{
-				path: "/empleados",
+				path: "empleados",
 				element: (
 					<Suspense>
 						<Empleados />
@@ -212,7 +215,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/nuevo-empleado",
+				path: "nuevo-empleado",
 				element: (
 					<Suspense>
 						<NuevoEmpleado />
@@ -220,7 +223,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/edit-empleado/:id",
+				path: "edit-empleado/:id",
 				element: (
 					<Suspense>
 						<EditarEmpleado />
@@ -228,7 +231,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/view-empleado/:id",
+				path: "view-empleado/:id",
 				element: (
 					<Suspense>
 						<ViewEmpleado />
@@ -236,7 +239,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/proveedores",
+				path: "proveedores",
 				index: true,
 				element: (
 					<Suspense>
@@ -245,7 +248,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/nuevo-proveedor",
+				path: "nuevo-proveedor",
 				element: (
 					<Suspense>
 						<NuevoProveedor />
@@ -253,7 +256,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/edit-proveedor/:id",
+				path: "edit-proveedor/:id",
 				element: (
 					<Suspense>
 						<EditarProveedor />
@@ -261,7 +264,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/view-proveedor/:id",
+				path: "view-proveedor/:id",
 				element: (
 					<Suspense>
 						<ViewProveedor />
@@ -270,7 +273,7 @@ export const router = createBrowserRouter([
 			},
 
 			{
-				path: "/almacenes",
+				path: "almacenes",
 				index: true,
 				element: (
 					<Suspense>
@@ -279,7 +282,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/nuevo-almacen",
+				path: "nuevo-almacen",
 				element: (
 					<Suspense>
 						<NuevoAlmacen />
@@ -287,7 +290,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/edit-almacen/:id",
+				path: "edit-almacen/:id",
 				element: (
 					<Suspense>
 						<EditarAlmacen />
@@ -295,7 +298,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/view-almacen/:id",
+				path: "view-almacen/:id",
 				element: (
 					<Suspense>
 						<ViewAlmacen />

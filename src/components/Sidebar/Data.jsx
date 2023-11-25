@@ -11,7 +11,7 @@ export const datas = [
 	{
 		id: 1,
 		icon: <RxDashboard />,
-		path: "/inicio",
+		path: "inicio",
 		text: "Inicio",
 	},
 	{
@@ -21,12 +21,12 @@ export const datas = [
 		subItems: [
 			{
 				id: "receipts",
-				path: "/transacciones/compras",
+				path: "transacciones/compras",
 				text: "Entradas",
 			},
 			{
 				id: "issues",
-				path: "/transacciones/ventas",
+				path: "transacciones/ventas",
 				text: "Salidas",
 			},
 		],
@@ -38,12 +38,12 @@ export const datas = [
 		subItems: [
 			{
 				id: "products",
-				path: "/catalogo/productos",
+				path: "catalogo/productos",
 				text: "Productos",
 			},
 			{
 				id: "categories",
-				path: "/catalogo/categorias",
+				path: "catalogo/categorias",
 				text: "Categorias",
 			},
 		],
@@ -51,25 +51,25 @@ export const datas = [
 	{
 		id: 4,
 		icon: <LuWarehouse />,
-		path: "/almacenes",
+		path: "almacenes",
 		text: "Almacenes",
 	},
 	{
 		id: 5,
 		icon: <FaHandshakeSimple />,
-		path: "/clientes",
+		path: "clientes",
 		text: "Gestión de Clientes",
 	},
 	{
 		id: 6,
 		icon: <FiTruck />,
-		path: "/proveedores",
+		path: "proveedores",
 		text: "Gestión de Proveedores",
 	},
 	{
 		id: 7,
 		icon: <GoPeople />,
-		path: "/empleados",
+		path: "empleados",
 		text: "Gestión de Empleados",
 	},
 	{

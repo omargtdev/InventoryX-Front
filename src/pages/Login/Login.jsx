@@ -7,6 +7,7 @@ import BtnLogin from "../../components/BtnLogin";
 import { LoginUseContext } from "../../context/login/LoginUseContext";
 import { useIsUserLoggedIn } from "../../hooks/useIsUserLoggedIn";
 import { useUserStore } from "../../store/useUserStore";
+import env from "../../config/env";
 
 const Login = () => {
 	const isUserLoggedIn = useIsUserLoggedIn();
@@ -15,7 +16,7 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isUserLoggedIn) navigate("/");
+		if (isUserLoggedIn) navigate(env.BASE_URL);
 	}, [isUserLoggedIn]);
 
 	const { isSignIn: isSignInForm } = useContext(LoginUseContext);

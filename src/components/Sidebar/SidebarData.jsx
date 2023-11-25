@@ -3,6 +3,7 @@ import { datas } from "./Data";
 import SidebarItem from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/useUserStore";
+import env from "../../config/env";
 
 const SidebarData = ({ toggle }) => {
 	const [expandedItems, setExpandedItems] = useState([]);
@@ -26,7 +27,7 @@ const SidebarData = ({ toggle }) => {
 	const logout = () => {
 		setUserToken(null);
 		setUserInfo(null);
-		navigate("/login");
+		navigate(`${env.BASE_URL}login`);
 	}
 
 	useEffect(() => {

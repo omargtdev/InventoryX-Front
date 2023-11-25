@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import env from "../../config/env";
 
 const SidebarItem = ({
 	toggle, handleToggle, isUserAdmin,
@@ -21,7 +22,7 @@ const SidebarItem = ({
 
 	return (
 		<Link
-			to={data.path || "#"}
+			to={data.path ? `${env.BASE_URL}${data.path}` : "#"}
 			className={`${toggle ? "last:w-[3.6rem] " : "last:w-[17rem] "} ${isSelected ? "bg-white" : "hover:bg-white "
 				} flex items-start mt-2 p-4 flex-col rounded-lg cursor-pointer group transition-all duration-500  last:absolute left-4 bottom-4`}
 			key={data.id}
@@ -43,7 +44,7 @@ const SidebarItem = ({
 			</div>
 			{data.subItems && isExpanded && (
 				<div className="w-full">
-					{data.subItems.map((subItem) => ( <Link to={subItem.path} key={subItem.id}>
+					{data.subItems.map((subItem) => ( <Link to={`${env.BASE_URL}${subItem.path}`} key={subItem.id}>
 							<h2
 								key={subItem.id}
 								className="p-2 text-black hover:bg-gray-200 transition-all duration-500 rounded-md"

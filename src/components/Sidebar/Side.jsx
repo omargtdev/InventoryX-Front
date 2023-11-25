@@ -4,6 +4,7 @@ import SidebarData from "./SidebarData";
 import UserProfile from "./UserProfile";
 import { useIsUserLoggedIn } from "../../hooks/useIsUserLoggedIn";
 import { useNavigate } from "react-router-dom";
+import env from "../../config/env";
 
 const Sidebar = () => {
 	const [toggle, setToggle] = useState(false);
@@ -12,7 +13,7 @@ const Sidebar = () => {
 	const navigate = useNavigate();
 
 	if (!isUserLoggedIn) {
-		navigate("/login");
+		navigate(`${env.BASE_URL}login`);
 		return;
 	}
 
