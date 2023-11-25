@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../../components/Modals/GetProducts/Modal";
 import Row from "./Row";
+import receiptService from "../../../services/receipt.service";
+import { MODAL_TYPES, useGlobalModalContext } from "../../../components/Modals/GlobalModal";
 
 const GetProducts = ({ selectedProviderId, selectedDate }) => {
+	const { showModal } = useGlobalModalContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 	const [tableData, setTableData] = useState([]);
@@ -128,15 +131,36 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 				row.venta.trim() !== ""
 		);
 
+		if(!selectedDate) {
+			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
+				title: "Campos faltantes",
+				content: "Por favor, seleccione una fecha del registro.",
+			});
+			return;
+		}
+
+		if(!selectedProviderId) {
+			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
+				title: "Campos faltantes",
+				content: "Por favor, seleccione un proveedor.",
+			});
+			return;
+		}
+
 		if (!isAtLeastOneRow || !areAllFieldsFilled) {
-			// Muestra una alerta si faltan campos por llenar
-			alert("Por favor, completa todos los campos antes de crear.");
+			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
+				title: "Campos faltantes",
+				content: "Por favor, completa todos los campos antes de crear.",
+			});
 			return;
 		}
 
 		// Verifica si se ha seleccionado un archivo
 		if (!selectedFile) {
-			alert("Por favor, selecciona un archivo antes de crear.");
+			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
+				title: "Campos faltantes",
+				content: "Debe seleccionar un archivo (pdf).",
+			});
 			return;
 		}
 		// Lógica para crear un nuevo array de objetos con los nuevos datos ingresados
@@ -147,18 +171,31 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 				Products: [
 					{
 						Code: fila.codigo,
-						Count: fila.cantidad,
-						UnitPurchasePrice: fila.compra,
-						UnitSalesPrice: fila.venta,
+						Count: Number(fila.cantidad),
+						UnitPurchasePrice: Number(fila.compra),
+						UnitSalesPrice: Number(fila.venta),
 					},
 				],
 			};
 		});
 
-		// Añade lógica adicional si es necesario, como enviar newData a una API, etc.
-		console.log("Nuevo Array de Objetos:", newData);
+		const { isOk, receiptId, errorMessage } = await receiptService.addReceipt({
+			jsonContent: newData[newData.length - 1],
+			file: selectedFile
+		});
 
-		alert("Datos enviados exitosamente.");
+		if(isOk) {
+			showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+				title: "Registro exitoso",
+				content: "La Entrada se guardó correctamente!",
+			});
+			return;
+		}
+
+		showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+			title: "Ocurrio un error",
+			content: errorMessage,
+		});
 	};
 
 	return (

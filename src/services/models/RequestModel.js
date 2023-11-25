@@ -56,6 +56,14 @@ class RequestModel {
 		return this.#headers;
 	}
 
+	deleteHeader(headerName){
+		this.#headers.delete(headerName);
+	}
+
+	addOrReplaceHeader(headerName, headerValue){
+		this.#headers.set(headerName, headerValue);
+	}
+
 }
 
 export default RequestModel;

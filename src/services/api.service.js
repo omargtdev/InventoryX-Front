@@ -23,16 +23,17 @@ const GET = async (request) => {
 	return result;
 };
 
-const POST = async (request) => {
-	const { url, headers, bodyStringified: body } = request;
+const POST = async (request, stringfied = true) => {
+	const { url, headers } = request;
 	const result = new ResponseModel();
-	console.log(body);
+
+	const bodyToSend = stringfied ? request.bodyStringified : request.body;
 
 	try {
 		const response = await fetch(url, {
 			headers,
 			method: "POST",
-			body,
+			body: bodyToSend,
 		});
 		const data = await response.json();
 
