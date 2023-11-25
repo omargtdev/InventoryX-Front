@@ -69,6 +69,7 @@ const ViewProducto = () => {
 							{product.description}
 						</p>
 					</div>
+
 				</div>
 				<div className="flex flex-1 flex-col shrink-0 gap-4 bg-[#cfcfcf4f] p-5 rounded-3xl">
 					<div>
@@ -91,6 +92,15 @@ const ViewProducto = () => {
 						</label>
 						<p className="text-center font-sans-montserrat">
 							{product.warehouse?.name}
+						</p>
+					</div>
+
+					<div>
+						<label className="font-semibold text-lg font-sans-montserrat">
+							Stock:
+						</label>
+						<p className="text-center font-sans-montserrat font-bold">
+							{product.stock}
 						</p>
 					</div>
 				</div>

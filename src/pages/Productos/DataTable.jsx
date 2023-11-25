@@ -188,7 +188,7 @@ const DataTable = ({ products, setProducts }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Descripcion Producto
+											Stock
 										</th>
 										<th
 											scope="col"
@@ -200,7 +200,7 @@ const DataTable = ({ products, setProducts }) => {
 											scope="col"
 											className="text-sm font-lg text-white px-6 py-4"
 										>
-											Tipo Producto
+											Categoria
 										</th>
 										<th
 											scope="col"
@@ -227,7 +227,7 @@ const DataTable = ({ products, setProducts }) => {
 												{data.name}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
-												{data.description}
+												{data.stock}
 											</td>
 											<td className="text-base text-gray-900  px-6 py-4 whitespace-nowrap">
 												{data.brand}
