@@ -45,7 +45,7 @@ export const datas = [
 				id: "categories",
 				path: "/catalogo/categorias",
 				text: "Categorias",
-			}
+			},
 		],
 	},
 	{
@@ -66,7 +66,7 @@ export const datas = [
 		path: "/proveedores",
 		text: "Gestión de Proveedores",
 	},
-		{
+	{
 		id: 7,
 		icon: <GoPeople />,
 		path: "/empleados",
@@ -76,5 +76,5 @@ export const datas = [
 		id: 8,
 		icon: <FiLogOut />,
 		text: "Logout",
-	}
+	},
 ];

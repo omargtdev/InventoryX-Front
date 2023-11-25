@@ -10,13 +10,14 @@ import { LoginUseProvider } from "../context/login/LoginUseProvider";
 const Welcome = lazy(() => import("../pages/Welcome"));
 
 // Transacciones
-const Ventas = lazy(() => import("../pages/Transacciones/Ventas"));
-const Compras = lazy(() => import("../pages/Transacciones/Compras"));
+const Ventas = lazy(() => import("../pages/Transacciones/Salidas/Ventas"));
+const Compras = lazy(() => import("../pages/Transacciones/Entradas/Compras"));
 
 // Catalogo
-const Categorias = lazy(() => import("../pages/Catalogo/Categorias"));
-const Marcas = lazy(() => import("../pages/Catalogo/Marcas"));
-const SubCategorias = lazy(() => import("../pages/Catalogo/SubCategorias"));
+const Categorias = lazy(() => import("../pages/Categorias/Categorias"));
+const NuevaCategoria = lazy(() => import("../pages/Categorias/NuevaCategoria"));
+const EditarCategoria = lazy(() => import("../pages/Categorias/EditCategoria"));
+const ViewCategoria = lazy(() => import("../pages/Categorias/ViewCategoria"));
 
 //Productos
 const Productos = lazy(() => import("../pages/Productos/Productos"));
@@ -84,7 +85,7 @@ export const router = createBrowserRouter([
 						path: "compras",
 						element: (
 							<Suspense>
-								<Compras />,
+								<Compras />
 							</Suspense>
 						),
 					},
@@ -135,14 +136,6 @@ export const router = createBrowserRouter([
 						),
 					},
 					{
-						path: "marcas",
-						element: (
-							<Suspense>
-								<Marcas />
-							</Suspense>
-						),
-					},
-					{
 						path: "categorias",
 						element: (
 							<Suspense>
@@ -151,10 +144,26 @@ export const router = createBrowserRouter([
 						),
 					},
 					{
-						path: "subCategorias",
+						path: "categorias/nueva-categoria",
 						element: (
 							<Suspense>
-								<SubCategorias />
+								<NuevaCategoria />
+							</Suspense>
+						),
+					},
+					{
+						path: "categorias/edit-categoria/:id",
+						element: (
+							<Suspense>
+								<EditarCategoria />
+							</Suspense>
+						),
+					},
+					{
+						path: "categorias/view-categoria/:id",
+						element: (
+							<Suspense>
+								<ViewCategoria />
 							</Suspense>
 						),
 					},
@@ -165,7 +174,7 @@ export const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense>
-						<Clientes />,
+						<Clientes />
 					</Suspense>
 				),
 			},
@@ -173,7 +182,7 @@ export const router = createBrowserRouter([
 				path: "/nuevo-cliente",
 				element: (
 					<Suspense>
-						<NuevoCliente />,
+						<NuevoCliente />
 					</Suspense>
 				),
 			},
@@ -181,7 +190,7 @@ export const router = createBrowserRouter([
 				path: "/edit-cliente/:id",
 				element: (
 					<Suspense>
-						<EditarCliente />,
+						<EditarCliente />
 					</Suspense>
 				),
 			},
@@ -189,7 +198,7 @@ export const router = createBrowserRouter([
 				path: "/view-cliente/:id",
 				element: (
 					<Suspense>
-						<ViewCliente />,
+						<ViewCliente />
 					</Suspense>
 				),
 			},
@@ -231,7 +240,7 @@ export const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense>
-						<Proveedores />,
+						<Proveedores />
 					</Suspense>
 				),
 			},
@@ -239,7 +248,7 @@ export const router = createBrowserRouter([
 				path: "/nuevo-proveedor",
 				element: (
 					<Suspense>
-						<NuevoProveedor />,
+						<NuevoProveedor />
 					</Suspense>
 				),
 			},
@@ -247,7 +256,7 @@ export const router = createBrowserRouter([
 				path: "/edit-proveedor/:id",
 				element: (
 					<Suspense>
-						<EditarProveedor />,
+						<EditarProveedor />
 					</Suspense>
 				),
 			},
@@ -255,7 +264,7 @@ export const router = createBrowserRouter([
 				path: "/view-proveedor/:id",
 				element: (
 					<Suspense>
-						<ViewProveedor />,
+						<ViewProveedor />
 					</Suspense>
 				),
 			},
@@ -265,7 +274,7 @@ export const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense>
-						<Almacenes />,
+						<Almacenes />
 					</Suspense>
 				),
 			},
@@ -273,7 +282,7 @@ export const router = createBrowserRouter([
 				path: "/nuevo-almacen",
 				element: (
 					<Suspense>
-						<NuevoAlmacen />,
+						<NuevoAlmacen />
 					</Suspense>
 				),
 			},
@@ -281,7 +290,7 @@ export const router = createBrowserRouter([
 				path: "/edit-almacen/:id",
 				element: (
 					<Suspense>
-						<EditarAlmacen />,
+						<EditarAlmacen />
 					</Suspense>
 				),
 			},
@@ -289,7 +298,7 @@ export const router = createBrowserRouter([
 				path: "/view-almacen/:id",
 				element: (
 					<Suspense>
-						<ViewAlmacen />,
+						<ViewAlmacen />
 					</Suspense>
 				),
 			},
