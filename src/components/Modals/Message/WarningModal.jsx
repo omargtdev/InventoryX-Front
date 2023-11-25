@@ -1,3 +1,4 @@
+import BaseModal from "../BaseModal";
 import { useGlobalModalContext } from "../GlobalModal";
 
 const WarningModal = () => {
