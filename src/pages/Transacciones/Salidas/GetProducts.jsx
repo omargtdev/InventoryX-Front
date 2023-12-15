@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../../components/Modals/GetProducts/Modal";
+import issueService from "../../../services/issue.service";
 import Row from "./Row";
-import receiptService from "../../../services/receipt.service";
 import {
 	MODAL_TYPES,
 	useGlobalModalContext,
 } from "../../../components/Modals/GlobalModal";
 
-const GetProducts = ({ selectedProviderId, selectedDate }) => {
+const GetProducts = ({ selectedClientId }) => {
 	const { showModal } = useGlobalModalContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 	const [tableData, setTableData] = useState([]);
 	const [isCreateButtonDisabled, setIsCreateButtonDisabled] = useState(true);
 	const [total, setTotal] = useState(0);
-	const [selectedFile, setSelectedFile] = useState(null);
 	const updateSelectedRowIndex = (index) => {
 		setSelectedRowIndex(index);
 	};
+
+	console.log(selectedClientId);
 
 	const updateTotal = () => {
 		const newTotal = tableData.reduce(
@@ -32,9 +33,7 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 			(row) =>
 				row.codigo.trim() !== "" &&
 				row.nombre.trim() !== "" &&
-				row.cantidad.trim() !== "" &&
-				row.compra.trim() !== "" &&
-				row.venta.trim() !== ""
+				row.cantidad.trim() !== ""
 		);
 
 		setIsCreateButtonDisabled(!isAtLeastOneRow || !areAllFieldsFilled);
@@ -50,8 +49,7 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 			codigo: "",
 			nombre: "",
 			cantidad: "",
-			compra: "",
-			venta: "",
+			precio: "",
 			total: "",
 		};
 
@@ -61,7 +59,7 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 	};
 
 	const handleCellValueChange = (index, columna, valor) => {
-		if (columna === "compra" || columna === "cantidad" || columna === "venta") {
+		if (columna === "cantidad" || columna === "precio") {
 			// Verifica si el valor es un número
 			if (isNaN(Number(valor))) {
 				return; // Si no es un número, no actualices el estado
@@ -72,8 +70,8 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 		newData[index][columna] = valor;
 
 		// Actualiza el total basado en la multiplicación de compra y cantidad
-		if (columna === "compra" || columna === "cantidad") {
-			const compra = parseFloat(newData[index]["compra"]) || 0;
+		if (columna === "precio" || columna === "cantidad") {
+			const compra = parseFloat(newData[index]["precio"]) || 0;
 			const cantidad = parseFloat(newData[index]["cantidad"]) || 0;
 			newData[index]["total"] = (compra * cantidad).toFixed(2);
 		}
@@ -102,17 +100,14 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 
 	const handleSelectProduct = (product) => {
 		if (selectedRowIndex !== null) {
-			console.log("Selected Row Index:", selectedRowIndex);
-			console.log("Selected Product:", product);
-
 			const newData = [...tableData];
 			newData[selectedRowIndex] = {
 				...newData[selectedRowIndex],
 				codigo: product.code,
 				nombre: product.name,
+				precio: product.price.lastIssuePrice,
 			};
 
-			console.log("New Data after Update:", newData);
 			setTableData(newData);
 			closeModal();
 		}
@@ -129,23 +124,13 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 			(row) =>
 				row.codigo.trim() !== "" &&
 				row.nombre.trim() !== "" &&
-				row.cantidad.trim() !== "" &&
-				row.compra.trim() !== "" &&
-				row.venta.trim() !== ""
+				row.cantidad.trim() !== ""
 		);
 
-		if (!selectedDate) {
+		if (!selectedClientId) {
 			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
 				title: "Campos faltantes",
-				content: "Por favor, seleccione una fecha del registro.",
-			});
-			return;
-		}
-
-		if (!selectedProviderId) {
-			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
-				title: "Campos faltantes",
-				content: "Por favor, seleccione un proveedor.",
+				content: "Por favor, seleccione un Cliente.",
 			});
 			return;
 		}
@@ -158,49 +143,47 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 			return;
 		}
 
-		// Verifica si se ha seleccionado un archivo
-		if (!selectedFile) {
-			showModal(MODAL_TYPES.MESSAGE.WARNING_MODAL, {
-				title: "Campos faltantes",
-				content: "Debe seleccionar un archivo (pdf).",
-			});
-			return;
-		}
-		// Lógica para crear un nuevo array de objetos con los nuevos datos ingresados
-		const newData = tableData.map((fila, index) => {
-			return {
-				ProviderId: selectedProviderId,
-				RegistrationDate: selectedDate,
-				Products: [
-					{
-						Code: fila.codigo,
-						Count: Number(fila.cantidad),
-						UnitPurchasePrice: Number(fila.compra),
-						UnitSalesPrice: Number(fila.venta),
-					},
-				],
+		if (isAtLeastOneRow && areAllFieldsFilled) {
+			const client = {
+				name: selectedClientId.name,
+				email: selectedClientId.email,
+				phone: selectedClientId.phone,
+				documentType: selectedClientId.documentType,
+				documentNumber: selectedClientId.documentNumber,
+				address: selectedClientId.address,
+				isLegal: selectedClientId.isLegal,
 			};
-		});
 
-		console.log("New Data:", newData);
+			// Crea un array para almacenar los productos
+			const products = tableData.map((fila) => ({
+				Code: fila.codigo,
+				Count: Number(fila.cantidad),
+			}));
 
-		const { isOk, receiptId, errorMessage } = await receiptService.addReceipt({
-			jsonContent: newData[newData.length - 1],
-			file: selectedFile,
-		});
+			// Combina el cliente y los productos en un solo objeto
+			const newData = {
+				Client: client,
+				Products: products,
+			};
 
-		if (isOk) {
-			showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
-				title: "Registro exitoso",
-				content: "La Entrada se guardó correctamente!",
+			console.log(newData);
+			const { errorMessage, issues, isOk } = await issueService.createIssue(
+				newData
+			);
+
+			if (isOk) {
+				showModal(MODAL_TYPES.MESSAGE.SUCCESS_MODAL, {
+					title: "Registro exitoso",
+					content: "La Entrada se guardó correctamente!",
+				});
+				return;
+			}
+
+			showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
+				title: "Ocurrio un error",
+				content: errorMessage,
 			});
-			return;
 		}
-
-		showModal(MODAL_TYPES.MESSAGE.DANGER_MODAL, {
-			title: "Ocurrio un error",
-			content: errorMessage,
-		});
 	};
 
 	return (
@@ -250,13 +233,7 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 										scope="col"
 										className="text-sm font-medium text-white px-6 py-4"
 									>
-										P.U Compra
-									</th>
-									<th
-										scope="col"
-										className="text-sm font-medium text-white px-6 py-4"
-									>
-										P.U Venta
+										Precio
 									</th>
 									<th
 										scope="col"
@@ -288,16 +265,6 @@ const GetProducts = ({ selectedProviderId, selectedDate }) => {
 						</span>
 					</div>
 				</div>
-			</div>
-			<div className="flex items-center mt-10 gap-10">
-				<h2 className="flex-0 font-sans-montserrat  font-bold">
-					Guia de Remisión
-				</h2>
-				<input
-					type="file"
-					placeholder="Sube tu Archivo"
-					onChange={(e) => setSelectedFile(e.target.files[0])}
-				/>
 			</div>
 			<div className="flex justify-end mt-10 ">
 				<button
