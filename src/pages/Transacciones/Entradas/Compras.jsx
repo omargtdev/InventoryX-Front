@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Proveedores from "./GetProveedor";
 import Productos from "./GetProducts";
+import Entries from "./GetEntries";
 
 const Compras = () => {
 	const [selectedProviderId, setSelectedProviderId] = useState("");
@@ -25,6 +26,7 @@ const Compras = () => {
 				selectedProviderId={selectedProviderId}
 				selectedDate={selectedDate}
 			/>
+			<Entries />
 		</div>
 	);
 };

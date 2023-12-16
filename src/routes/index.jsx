@@ -56,7 +56,6 @@ const NuevoAlmacen = lazy(() => import("../pages/Almacenes/NuevoAlmacen"));
 const EditarAlmacen = lazy(() => import("../pages/Almacenes/EditarAlmacen"));
 const ViewAlmacen = lazy(() => import("../pages/Almacenes/ViewAlmacen"));
 
-
 console.log(env.BASE_URL);
 export const router = createBrowserRouter([
 	{
@@ -76,7 +75,7 @@ export const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense>
-						<Welcome />,
+						<Welcome />
 					</Suspense>
 				),
 			},
