@@ -157,23 +157,11 @@ const NuevoCliente = () => {
 							{...register("phone", {
 								required: true,
 								pattern: {
-									value: /^\d{3}-\d{3}-\d{4}$/,
-									message: "El formato debe ser 000-000-0000",
+									value: /^\d{9}$/,
+									message: "El formato debe ser 9 numeros",
 								},
 								maxLength: 12,
 							})}
-							onChange={(e) => {
-								const input = e.target.value.replace(/\D/g, "");
-								if (input.length > 0) {
-									e.target.value = input
-										.match(/(\d{0,3})(\d{0,3})(\d{0,4})/)
-										.slice(1, 4)
-										.filter((group) => group !== "")
-										.join("-");
-								} else {
-									e.target.value = "";
-								}
-							}}
 							className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300"
 						/>
 						{errors.phone?.type === "required" && (
