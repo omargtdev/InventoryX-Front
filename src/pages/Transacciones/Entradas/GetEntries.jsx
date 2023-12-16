@@ -14,7 +14,12 @@ const GetEntries = () => {
 		);
 		if (!isOk) alert(resultMessage);
 
-		setReceipts(receipts);
+		// Sort receipts by registrationDate in descending order
+		const sortedReceipts = receipts.sort(
+			(a, b) => new Date(b.registrationDate) - new Date(a.registrationDate)
+		);
+
+		setReceipts(sortedReceipts);
 	};
 
 	useEffect(() => {
@@ -24,8 +29,9 @@ const GetEntries = () => {
 	const toggleLista = () => {
 		setMostrarLista((prev) => !prev);
 	};
+
 	return (
-		<div>
+		<div className="mt-5">
 			<div className="p-5 rounded-2xl bg-[#cfcfcf4f] text-center">
 				<h2 className="font-sans-montserrat font-bold mb-2">
 					Lista de Entradas:
@@ -45,7 +51,7 @@ const GetEntries = () => {
 						<li key={receipt.id} className="flex gap-3 items-center">
 							<div className="flex-1">{receipt.providerName}</div>
 							<div className="flex-1">
-								{new Date(receipt.registrationDate).toLocaleDateString("en-US")}
+								{new Date(receipt.registrationDate).toLocaleDateString("es-ES")}
 							</div>
 							<a
 								className="flex-1 flex justify-center"
